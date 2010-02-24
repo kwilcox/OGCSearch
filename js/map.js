@@ -443,9 +443,10 @@ Ext.onReady(function() {
     if (layerPanel.collapsed) {
       layerPanel.expand();
     }
-    var layer        = record.get("layer").clone();
-    layer.singleTile = true;
-    layer.visibility = visibility;
+    var layer         = record.get("layer").clone();
+    layer.singleTile  = true;
+    layer.visibility  = visibility;
+    layer.isBaseLayer = false;
     map.addLayer(layer);
 
     // add the layer to the list
