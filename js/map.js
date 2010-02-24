@@ -394,8 +394,39 @@ Ext.onReady(function() {
   var gridGetCaps = new Ext.grid.GridPanel({
      store   : storeGetCaps
     ,columns : [
-       {header : "Title"      ,dataIndex : "title"    ,sortable : true         ,id    : 'title'}
-      ,{header : "Name"       ,dataIndex : "name"     ,sortable : true                         }
+       {header : "Title"          ,dataIndex : "title"     ,sortable : true         ,id       : 'title', width : 150}
+      ,{header : "Name"           ,dataIndex : "name"      ,sortable : true                                         }
+      ,{header : "Projection(s)"  ,dataIndex : "srs"       ,sortable : true         ,renderer : function(value,metaData,record,rowIndex,colIndex,store) {
+        var a = Array();
+        for (var i in value) {
+          if (value[i]) {
+            a.push(i);
+          }
+        }
+        return a.join(',');
+      }}
+      ,{header : "Time first"     ,dataIndex : "dimensions",sortable : true         ,renderer : function(value,metaData,record,rowIndex,colIndex,store) {
+        if (value['time'] && value['time']['values']) {
+          return String((value['time']['values'])).split('/')[0];
+        }
+      }}
+      ,{header : "Time last"      ,dataIndex : "dimensions",sortable : true         ,renderer : function(value,metaData,record,rowIndex,colIndex,store) {
+        if (value['time'] && value['time']['values']) {
+          return String((value['time']['values'])).split('/')[1];
+        }
+      }}
+      ,{header : "Time resolution",dataIndex : "dimensions",sortable : true         ,renderer : function(value,metaData,record,rowIndex,colIndex,store) {
+        if (value['time'] && value['time']['values']) {
+          return String((value['time']['values'])).split('/')[2];
+        }
+      }}
+      ,{header : "Time default"   ,dataIndex : "dimensions",sortable : true         ,renderer : function(value,metaData,record,rowIndex,colIndex,store) {
+        for (var i in value) {
+          if (i == 'time') {
+            return value[i].default;
+          }
+        }
+      }}
     ]
     ,listeners        : {
       rowdblclick : function(grid,index) {
@@ -403,7 +434,6 @@ Ext.onReady(function() {
       }
     }
     ,loadMask         : true
-    ,autoExpandColumn : "title"
   });
 
   function mkTreeNodeGroup(id) {
@@ -467,6 +497,7 @@ Ext.onReady(function() {
     }
 
     // save extent & srs info
+    a = record.get("dimensions").time;
     maxBBOX[record.get("title")] = {
        bbox : new OpenLayers.Bounds.fromString(String(record.get("llbbox")))
       ,epsg : new OpenLayers.Projection("EPSG:4326")
@@ -488,11 +519,12 @@ Ext.onReady(function() {
     ,layout      : 'accordion'
     ,items       : [gridGetCaps]
     ,closeAction : 'hide'
-    ,width       : 400
+    ,width       : 500
     ,height      : 300
     ,layout      : 'fit'
+    ,maximizable : true
     ,tbar: [
-      'Double click a row to add the layer to the map.'
+      'Double click a row to add the layer to the map. Time sensitive queries are not yet supported.'
     ]
   });
 
