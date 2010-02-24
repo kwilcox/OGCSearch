@@ -31,9 +31,12 @@ function addKMLToMap(u,category,visibility) {
   if (layerPanel.collapsed) {
     layerPanel.expand();
   }
+  
+  var purl = proxyLoc ? proxyLoc + escape(u) : u;
+  
   var proxyKML = new GeoExt.data.ProtocolProxy({
     protocol : new OpenLayers.Protocol.HTTP({
-       url    : proxyLoc+u
+       url    : purl
       ,format : new OpenLayers.Format.KML()
     })
   });
@@ -321,6 +324,9 @@ Ext.onReady(function() {
   actions["credits"] = action;
 
   function populateSampleLayers() {
+    
+    var purl, u;
+    
     var store = new GeoExt.data.WMSCapabilitiesStore({
       listeners : {
         load : function() {
@@ -330,7 +336,10 @@ Ext.onReady(function() {
       }
     });
     store.removeAll();
-    store.proxy.conn.url = proxyLoc+escape('http://staging.asascience.com/ecop/wms.aspx?REQUEST=GetCapabilities&VERSION=1.1.1&SERVICE=WMS');
+    
+    u = 'http://staging.asascience.com/ecop/wms.aspx?REQUEST=GetCapabilities&VERSION=1.1.1&SERVICE=WMS';
+    purl = proxyLoc ? proxyLoc + escape(u) : u;
+    store.proxy.conn.url = purl
     store.load();
 
     store = new GeoExt.data.WMSCapabilitiesStore({
@@ -342,7 +351,10 @@ Ext.onReady(function() {
       }
     });
     store.removeAll();
-    store.proxy.conn.url = proxyLoc+escape('http://www.bsc-eoc.org/cgi-bin/bsc_ows.asp?service=WMS&version=1.1.1&request=GetCapabilities');
+    
+    u = 'http://www.bsc-eoc.org/cgi-bin/bsc_ows.asp?service=WMS&version=1.1.1&request=GetCapabilities';
+    purl = proxyLoc ? proxyLoc + escape(u) : u;
+    store.proxy.conn.url = purl
     store.load();
 
     addKMLToMap('http://www.gearthblog.com/kmfiles/emilyir.kml','Sample KML',false);
