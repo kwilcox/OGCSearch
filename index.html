@@ -1,0 +1,41 @@
+<html>
+  <head>
+    <title>OGCSearch</title>
+
+    <!-- pick one of the following blocks & make sure it's not commented out -->
+    <!-- staging.asascience.com
+    <script src='http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAALooj42_1bIPdSJl-3SmCKBSP6a3vCBtPg58UnOGlAEyflePNcxTsTJkZNe_zwZeAz0au0FZ4BwXcyg'></script>
+    <script>proxyLoc = 'http://staging.asascience.com/proxy/Proxy.ashx?u=';</script>
+    -->
+    <!-- dev box
+    <script src='http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAALooj42_1bIPdSJl-3SmCKBRn7YsmxacSs0oRV1PhhE4cHVNd0xS1qWt5P8rW4S-3303byIcKx49hTw'></script>
+    <script>proxyLoc = 'http://gentoo/cgi-bin/proxy.cgi?url=';</script>
+    -->
+
+    <script src='http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAALooj42_1bIPdSJl-3SmCKBRn7YsmxacSs0oRV1PhhE4cHVNd0xS1qWt5P8rW4S-3303byIcKx49hTw'></script>
+    <script>proxyLoc = 'http://gentoo/cgi-bin/proxy.cgi?url=';</script>
+
+    <script type="text/javascript" src="http://extjs.cachefly.net/ext-2.2.1/adapter/ext/ext-base.js"></script>
+    <script type="text/javascript" src="http://extjs.cachefly.net/ext-2.2.1/ext-all.js"></script>
+    <link rel="stylesheet" type="text/css" href="http://extjs.cachefly.net/ext-2.2.1/resources/css/ext-all.css" />
+    <link rel="stylesheet" type="text/css" href="http://extjs.cachefly.net/ext-2.2.1/examples/shared/examples.css" />
+    <link rel="stylesheet" type="text/css" href="css/ogcsearch.css">
+    <script src="js/OpenLayers.js"></script>
+    <script src="js/loadingPanel/lib/OpenLayers/Control/LoadingPanel.js"></script>
+    <script type="text/javascript" src="js/GeoExt.js"></script>
+    <script src="http://yui.yahooapis.com/3.0.0/build/yui/yui-min.js"></script>
+    <script src="http://www.google.com/jsapi" type="text/javascript"></script>
+    <script type="text/javascript" src="js/map.js"></script>
+    <script type="text/javascript" src="js/search.js"></script>
+  </head>
+  <body>
+    <div id="contents">
+      <form id="searcher">
+        <table id="search_table" width="100%">
+          <tr><td class="search-form"><div id="searchform">Something's up</div></td></tr>
+        </table>
+      </form>
+      <div class="gsc-results"><div id="results"></div><div id="cursor" class="gsc-cursor-box"></div></div> 
+    </div>
+  </body>
+</html>

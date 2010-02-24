@@ -1,0 +1,90 @@
+.directions td {
+  font-size : 11px;
+  text-align : justify;
+}
+
+#results .header {
+  font-size : 16px;
+  font-weight : bold;
+  margin-bottom : .25em;
+}
+
+#results .gs-result {
+  margin-bottom : 1em;
+  padding-left : 5px;
+}
+
+#results div.gs-watermark {
+  display : none;
+}
+
+#results ol {
+  list-style : decimal;
+  margin-left : 20px;
+  padding-left : 20px;
+}
+
+#cursor {
+  padding-left : 5px;
+}
+
+#extTips .x-window-body ul {
+  list-style : disc;
+  margin-left : 10px;
+  padding-left : 10px;
+}
+
+#extAbout td {
+  font-size:11px;
+  vertical-align:top;
+}
+
+#extHelp td {
+  font-size:11px;
+  vertical-align:top;
+}
+#extHelp .x-window-body ol {
+  list-style : decimal;
+  margin-left : 10px;
+  padding-left : 10px;
+}
+
+#extAbout .x-window-mc {
+   background-color: white;
+}
+#extHelp .x-window-mc {
+   background-color: white;
+}
+
+.buttonIcon {
+  background-repeat:no-repeat;
+}
+
+.olControlMousePosition {
+  background-color: #ffffff;
+  font-size: smaller;
+  font-weight: bold;
+  padding: 2px;
+}
+
+.olControlScaleLine {
+  background-color: #ffffff;
+  font-size: smaller;
+  font-weight: bold;
+  padding: 2px;
+}
+
+.olControlLoadingPanel {
+  background-image:url(../js/loadingPanel/theme/default/img/loading.gif);
+  position: relative;
+  width: 195px;
+  height: 11px;
+  background-position:center;
+  background-repeat:no-repeat;
+  display: none;
+}
+
+.legendText {
+  font-size:11px;
+}
+
