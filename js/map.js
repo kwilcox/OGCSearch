@@ -4,9 +4,14 @@ var storeGetCaps;
 var winGetCaps;
 var layerPanel;
 var layerTree;
+var viewport;
 var maxBBOX = new Array();
 var prevProjection;
 var prevZoom = new Array();
+
+// Earth
+var GoogleEarthPanel;
+google.load("earth", "1");
 
 function createPopup(feature,selectCtrl,layerKML,t) {
   popup = new GeoExt.Popup({
@@ -551,32 +556,6 @@ Ext.onReady(function() {
     ]
   });
 
-  mapPanel = new GeoExt.MapPanel({
-     region : "center"
-    ,id     : "mappanel"
-    ,xtype  : "gx_mappanel"
-    ,map    : map
-    ,layers : layerStore
-    ,zoom   : 1
-    ,split  : true
-    ,tbar   : [
-       actions["zoom_in"]
-      ,actions["zoom_out"]
-      ,actions["pan"]
-      ,actions["zoom_extents"]
-      ,'-'
-      ,actions["previous"]
-      ,actions["next"]
-      ,'->'
-      ,{
-         text   : "Help"
-        ,menu   : new Ext.menu.Menu({
-          items : [actions['help'],actions['credits']]
-        })
-      }
-    ]
-  });
-
   var treeConfig = new OpenLayers.Format.JSON().write([{
     nodeType: "gx_baselayercontainer"
   }],true);
@@ -625,10 +604,87 @@ Ext.onReady(function() {
     ,labelCls    : 'legendText'
   });
 
-  new Ext.Viewport({
+  var toolbar = new Ext.Toolbar({
+    items: [
+      actions["zoom_in"]
+      ,actions["zoom_out"]
+      ,actions["pan"]
+      ,actions["zoom_extents"]
+      ,'-'
+      ,actions["previous"]
+      ,actions["next"]
+      ,'->'
+      ,{
+        text: 'Google Earth',
+        id: "googleToggle",
+        enableToggle: true,
+        pressed: false,
+        handler: function() {
+            if (this.pressed) {
+                GoogleEarthPanel.add(googleEarthPanelItem);
+                GoogleEarthPanel.setHeight(300);
+                GoogleEarthPanel.setVisible(true);
+                GoogleEarthPanel.doLayout();
+                viewport.doLayout();
+            } else {
+                GoogleEarthPanel.remove('googleEarthPanelItem');
+                GoogleEarthPanel.setHeight(0);
+                GoogleEarthPanel.setVisible(false);
+                GoogleEarthPanel.doLayout();
+                viewport.doLayout();
+            }
+        }
+      },
+      {
+        text  : "Help"
+        ,menu : new Ext.menu.Menu({
+          items : [actions['help'],actions['credits']]
+        })
+      }
+    ]
+  });
+  
+  var googleEarthPanelItem = {
+    xtype: 'gxux_googleearthpanel',
+    id: 'googleEarthPanelItem',
+    map: map,
+    altitude: 50,
+    heading: -60,
+    tilt: 70,
+    range: 700
+  };
+
+  
+  mapPanel = new GeoExt.MapPanel({
+     region : "center"
+    ,id     : "mappanel"
+    ,xtype  : "gx_mappanel"
+    ,map    : map
+    ,layers : layerStore
+    ,zoom   : 1
+    ,split  : true
+  });
+
+  viewport = new Ext.Viewport({
      layout: "border"
     ,items: [
-       mapPanel
+      {
+        region: 'center'
+        ,layout: 'border'
+        ,tbar : toolbar
+        ,items:[
+          mapPanel
+          ,{
+            region: "south",
+            height: 0,
+            layout: 'fit',
+            id: "googleearthpanel",
+            closeAction: 'hide',
+            split: true,
+            hidden: true
+          }
+        ],
+      }  
       ,{ 
          region      : "west"
         ,contentEl   : "contents"
@@ -660,4 +716,9 @@ Ext.onReady(function() {
   map.setBaseLayer(layerBlueMarble4326);
   map.setCenter(new OpenLayers.LonLat(-100,40),4);
   Ext.getCmp('mappanel').body.setStyle('cursor','move');
+  
+  // Earth
+  GoogleEarthPanel = Ext.getCmp("googleearthpanel");
+  GoogleEarthPanel.add(googleEarthPanelItem);
+
 });
