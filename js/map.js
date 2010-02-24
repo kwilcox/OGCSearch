@@ -253,7 +253,12 @@ Ext.onReady(function() {
     ,text        : 'Zoom-in box'
     ,icon        : 'img/zoom_in.png'
     ,handler     : function() {
-      Ext.getCmp('mappanel').body.setStyle('cursor','crosshair');
+      if (navigator.appName == "Microsoft Internet Explorer") {
+        Ext.getCmp('mappanel').body.applyStyles('cursor:url("img/zoom_in.cur")');
+      }
+      else {
+        Ext.getCmp('mappanel').body.applyStyles('cursor:crosshair');
+      }
     }
   });
   actions["zoom_in"] = action;
@@ -267,7 +272,12 @@ Ext.onReady(function() {
     ,text        : 'Zoom-out box'
     ,icon        : 'img/zoom_out.png'
     ,handler     : function() {
-      Ext.getCmp('mappanel').body.setStyle('cursor','crosshair');
+      if (navigator.appName == "Microsoft Internet Explorer") {
+        Ext.getCmp('mappanel').body.applyStyles('cursor:url("img/zoom_out.cur")');
+      }
+      else {
+        Ext.getCmp('mappanel').body.applyStyles('cursor:crosshair');
+      }
     }
   });
   actions["zoom_out"] = action;
