@@ -8,6 +8,62 @@ var viewport;
 var maxBBOX = new Array();
 var prevProjection;
 var prevZoom = new Array();
+var tl,tlEventSource;
+
+function createTl() {
+  Timeline.OriginalEventPainter.prototype._showBubble = function(x, y, evt) {
+    eval(evt.getDescription());
+  }
+
+  tlEventSource = new Timeline.DefaultEventSource();
+  var bandInfos = [
+    Timeline.createBandInfo({
+       eventSource    : tlEventSource
+      ,date           : new Date()
+      ,width          : "80%"
+      ,intervalUnit   : Timeline.DateTime.MONTH
+      ,intervalPixels : 100
+      ,zoomIndex      : 10
+      ,zoomSteps      : new Array(
+         {pixelsPerInterval: 280,  unit: Timeline.DateTime.HOUR}
+        ,{pixelsPerInterval: 140,  unit: Timeline.DateTime.HOUR}
+        ,{pixelsPerInterval:  70,  unit: Timeline.DateTime.HOUR}
+        ,{pixelsPerInterval:  35,  unit: Timeline.DateTime.HOUR}
+        ,{pixelsPerInterval: 400,  unit: Timeline.DateTime.DAY}
+        ,{pixelsPerInterval: 200,  unit: Timeline.DateTime.DAY}
+        ,{pixelsPerInterval: 100,  unit: Timeline.DateTime.DAY}
+        ,{pixelsPerInterval:  50,  unit: Timeline.DateTime.DAY}
+        ,{pixelsPerInterval: 400,  unit: Timeline.DateTime.MONTH}
+        ,{pixelsPerInterval: 200,  unit: Timeline.DateTime.MONTH}
+        ,{pixelsPerInterval: 100,  unit: Timeline.DateTime.MONTH} // DEFAULT zoomIndex
+      )
+    })
+    ,Timeline.createBandInfo({
+       overview       : true
+      ,eventSource    : tlEventSource
+      ,date           : new Date()
+      ,width          : "20%"
+      ,intervalUnit   : Timeline.DateTime.YEAR
+      ,intervalPixels : 200
+    })
+  ];
+  bandInfos[1].syncWith  = 0;
+  bandInfos[1].highlight = true;
+
+  tl = Timeline.create(document.getElementById("timeline"), bandInfos);
+}
+
+var resizeTimerID = null;
+function onResize() {
+  if (resizeTimerID == null) {
+    resizeTimerID = window.setTimeout(function() {
+      resizeTimerID = null;
+      if (tl) {
+        tl.layout();
+      }
+    }, 500);
+  }
+}
 
 // Earth
 var GoogleEarthPanel;
@@ -296,7 +352,7 @@ Ext.onReady(function() {
     ,width       : 350
     ,plain       : true
     ,closeAction : 'hide'
-    ,html        : '<table width=100% cellpadding=0 cellspacing=0> <tr><td class="dirText"><ul class="dirUL"> <li> <table width=100%><tr> <td width=54 class="dirTD"><img src="img/search.png"></td> <td class="dirTD">&nbsp;</td> <td class="dirTD">Begin by entering in a query string into the Google search panel and pressing the Search button. Or follow an example:<br><ol><li><a href="javascript:searchForm.execute(\'water temperature\')">water temperature</a> search (then follow the rest of the help directions below)</li><li><a href="javascript:getLayers(\'http://staging.asascience.com/ecop/wms.aspx?REQUEST=GetCapabilities&VERSION=1.1.1&SERVICE=WMS\')">ASA GetCaps</a> link</li></ol></td> </tr></table> </li> <li> <table width=100%><tr> <td align=center width=54 class="dirTD"><img src="img/down1.png">&nbsp;&nbsp;&nbsp;<img src="img/down0.png"></td> <td class="dirTD">&nbsp;</td> <td class="dirTD">Once the search is complete, each Google hit will be followed by either a gray or a green down arrow. A green down arrow indicates at least one GetCapabilities was found on the page. Click the arrow to see the GetCapabilities URL list.</td> </tr></table> </li> <li> <table width=100%><tr> <td align=center width=54 class="dirTD"><img src="img/info1.png"></td> <td class="dirTD">&nbsp;</td> <td class="dirTD">Remember, these links don\'t guarantee a true GetCapabilities result, and they are not restricted to WMS.</td> </tr></table> </li> <li> <table width=100%><tr> <td align=center width=54 class="dirTD"><img src="img/map1.png"></td> <td class="dirTD">&nbsp;</td> <td class="dirTD">Each numbered GetCapabilities link with a Green Arrow will be followed by a Map button. Clicking on this icon will pass the URL to the map which will then list the available layers.</td> </tr></table> </li> <li> <table width=100%><tr> <td align=center width=54 class="dirTD"><img style="margin-top:2px" src="img/hand1.gif"></td> <td class="dirTD">&nbsp;</td> <td class="dirTD">After the map has parsed the GetCapabilities, double-click on a layer name to add it to the map.</td> </tr></table> </li> </ul></td></tr> </table>'
+    ,html        : '<table width=100% cellpadding=0 cellspacing=0> <tr><td class="dirText"><ul class="dirUL"> <li> <table width=100%><tr> <td width=54 class="dirTD"><img src="img/search.png"></td> <td class="dirTD">&nbsp;</td> <td class="dirTD">Begin by entering in a query string into the Google search panel and pressing the Search button. Or follow an example:<br><ol><li><a href="javascript:searchForm.execute(\'water temperature\')">water temperature</a> search (then follow the rest of the help directions below)</li><li><a href="javascript:getLayers(\'http://staging.asascience.com/ecop/wms.aspx?REQUEST=GetCapabilities&VERSION=1.1.1&SERVICE=WMS\')">ASA GetCaps</a> link</li><li><a href="javascript:getLayers(\'http://coastwatch.pfeg.noaa.gov/erddap/wms/erdBAssta5day/request?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities\')">CoastWatch GetCaps</a> link with WMS time support (There is a problem with the published Extents in the GetCaps for the time sensitive SST layer. To get around this, pan/zoom the map to the Eastern hemisphere FIRST, before adding the SST layer to your map.) Click on a value in the Timeline to change the Time parameter.</li></ol></td> </tr></table> </li> <li> <table width=100%><tr> <td align=center width=54 class="dirTD"><img src="img/down1.png">&nbsp;&nbsp;&nbsp;<img src="img/down0.png"></td> <td class="dirTD">&nbsp;</td> <td class="dirTD">Once the search is complete, each Google hit will be followed by either a gray or a green down arrow. A green down arrow indicates at least one GetCapabilities was found on the page. Click the arrow to see the GetCapabilities URL list.</td> </tr></table> </li> <li> <table width=100%><tr> <td align=center width=54 class="dirTD"><img src="img/info1.png"></td> <td class="dirTD">&nbsp;</td> <td class="dirTD">Remember, these links don\'t guarantee a true GetCapabilities result, and they are not restricted to WMS.</td> </tr></table> </li> <li> <table width=100%><tr> <td align=center width=54 class="dirTD"><img src="img/map1.png"></td> <td class="dirTD">&nbsp;</td> <td class="dirTD">Each numbered GetCapabilities link with a Green Arrow will be followed by a Map button. Clicking on this icon will pass the URL to the map which will then list the available layers.</td> </tr></table> </li> <li> <table width=100%><tr> <td align=center width=54 class="dirTD"><img style="margin-top:2px" src="img/hand1.gif"></td> <td class="dirTD">&nbsp;</td> <td class="dirTD">After the map has parsed the GetCapabilities, double-click on a layer name to add it to the map.</td> </tr></table> </li> </ul></td></tr> </table>'
     ,y           : 30
   });
   action = new Ext.Action({
@@ -351,7 +407,6 @@ Ext.onReady(function() {
       listeners : {
         load : function() {
           addToMap(this.getAt(this.find('name','OWLS')),'Sample WMS',false,false);
-          addToMap(this.getAt(this.find('name','PFW_S')),'Sample WMS',false,false);
         }
       }
     });
@@ -360,6 +415,17 @@ Ext.onReady(function() {
     u = 'http://www.bsc-eoc.org/cgi-bin/bsc_ows.asp?service=WMS&version=1.1.1&request=GetCapabilities';
     purl = proxyLoc ? proxyLoc + escape(u) : u;
     store.proxy.conn.url = purl
+    store.load();
+
+    store = new GeoExt.data.WMSCapabilitiesStore({
+      listeners : {
+        load : function() {
+          addToMap(this.getAt(this.find('name','DNI_NREL_Mod')),'Sample WMS',false,false);
+        }
+      }
+    });
+    store.removeAll();
+    store.proxy.conn.url = proxyLoc+escape('http://na.unep.net/cgi-bin/DNI?request=getcapabilities&Service=wms&version=1.1.1');
     store.load();
 
     addKMLToMap('http://www.gearthblog.com/kmfiles/emilyir.kml','Sample KML',false);
@@ -390,6 +456,14 @@ Ext.onReady(function() {
     ,handler : function() {findAndZoom(true)}
   });
   actions["findOnMap"] = action;
+
+  action = new Ext.Action({
+     text    : 'Clear timeline'
+    ,iconCls : 'buttonIcon'
+    ,icon    : 'img/trash.png'
+    ,handler : function() {tlEventSource.clear()}
+  });
+  actions["clearTimeline"] = action;
 
   // create a new WMS capabilities store
   var noData = {
@@ -445,7 +519,8 @@ Ext.onReady(function() {
     ]
     ,listeners        : {
       rowdblclick : function(grid,index) {
-        addToMap(grid.getStore().getAt(index),'User-added WMS',true,true);
+        // decided not to snapto zoom
+        addToMap(grid.getStore().getAt(index),'User-added WMS',true,false);
       }
     }
     ,loadMask         : true
@@ -512,12 +587,34 @@ Ext.onReady(function() {
     }
 
     // save extent & srs info
-    a = record.get("dimensions").time;
     maxBBOX[record.get("title")] = {
        bbox : new OpenLayers.Bounds.fromString(String(record.get("llbbox")))
       ,epsg : new OpenLayers.Projection("EPSG:4326")
       ,srs  : srs
     };
+
+    // populate timeline
+    if (record.get('dimensions') && record.get('dimensions')['time'] && record.get('dimensions')['time']['values']) {
+      var p = String(record.get('dimensions')['time']['values']).split('/');
+      var gotoTime;
+      if (p.length == 1) {
+        t = p[0].split(',');
+        var e = Array();
+        for (var i = 0; i < t.length; i++) {
+          e.push({
+             start       : t[i].replace(/ /g,'')
+            ,title       : record.get("title").substring(0,5)
+            ,description : "applyTime(\"" + record.get("title") + "\",\"" + t[i].replace(/ /g,'') + "\")"
+          });
+          gotoTime = t[i].replace(/ /g,'');
+        }
+        tlEventSource.loadJSON({events : e},'');
+      }
+      else {
+        return;
+      }
+      tl.getBand(0).setCenterVisibleDate(Timeline.DateTime.parseGregorianDateTime(gotoTime));
+    }
 
     // zoom to it
     if (zoom) {
@@ -539,7 +636,7 @@ Ext.onReady(function() {
     ,layout      : 'fit'
     ,maximizable : true
     ,tbar: [
-      'Double click a row to add the layer to the map. Time sensitive queries are not yet supported.'
+      'Double click a row to add the layer to the map. Only enumerated time series is supported.'
     ]
   });
 
@@ -703,8 +800,29 @@ Ext.onReady(function() {
         ,split        : true
         ,items        : [layerPanel,legendPanel]
       })
+      ,{
+         region       : 'south'
+        ,height       : 200
+        ,title        : 'Timeline'
+        ,html         : '<div id="timeline" style="height: 175px"></div>'
+        ,collapsible  : true
+        ,autoScroll   : true
+        ,split        : true
+        ,listeners    : {
+          resize : function(component,adjWidth,adjHeight,rawWidth,rawHeight) {
+            document.getElementById('timeline').style.height = adjHeight - 53;
+            if (tl) {
+              tl.layout();
+            }
+          }
+        }
+        ,tbar        : ['->',actions['clearTimeline']]
+      }
     ]
   });
+
+  // create the timeline
+  createTl();
 
   // show help at startup
   winHelp.show();
@@ -722,3 +840,11 @@ Ext.onReady(function() {
   GoogleEarthPanel.add(googleEarthPanelItem);
 
 });
+
+function applyTime(lName,lTime) {
+  for (var i in map.layers) {
+    if (map.layers[i].name == lName) {
+      map.layers[i].mergeNewParams({'time':lTime});
+    }
+  }
+}
