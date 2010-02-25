@@ -737,6 +737,9 @@ Ext.onReady(function() {
                 viewport.doLayout();
             }
         }
+        ,iconCls  : 'buttonIcon'
+        ,tooltip  : 'Toggle Google Earth window'
+        ,icon     : 'img/google_earth.gif'
       },
       {
         text  : "Help"
