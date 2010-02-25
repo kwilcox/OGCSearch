@@ -421,10 +421,8 @@ Ext.onReady(function() {
         }
       }}
       ,{header : "Time default"   ,dataIndex : "dimensions",sortable : true         ,renderer : function(value,metaData,record,rowIndex,colIndex,store) {
-        for (var i in value) {
-          if (i == 'time') {
-            return value[i].default;
-          }
+        if (value['time'] && value['time']['default']) {
+            return value['time']['default'];
         }
       }}
     ]
