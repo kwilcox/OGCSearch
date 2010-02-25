@@ -425,10 +425,16 @@ Ext.onReady(function() {
       }
     });
     store.removeAll();
-    store.proxy.conn.url = proxyLoc+escape('http://na.unep.net/cgi-bin/DNI?request=getcapabilities&Service=wms&version=1.1.1');
+    
+    u = 'http://na.unep.net/cgi-bin/DNI?request=getcapabilities&Service=wms&version=1.1.1';
+    purl = proxyLoc ? proxyLoc + escape(u) : u;
+    store.proxy.conn.url = purl;
     store.load();
-
-    addKMLToMap('http://www.gearthblog.com/kmfiles/emilyir.kml','Sample KML',false);
+    
+    
+    u = 'http://www.gearthblog.com/kmfiles/emilyir.kml';
+    purl = proxyLoc ? proxyLoc + escape(u) : u;
+    addKMLToMap(u,'Sample KML',false);
   }
 
   function findAndZoom(warn) {
