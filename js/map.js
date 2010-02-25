@@ -604,8 +604,15 @@ Ext.onReady(function() {
       var p = String(record.get('dimensions')['time']['values']).split('/');
       var gotoTime;
       if (p.length == 1) {
+        if (timelinePanel.collapsed) {
+          timelinePanel.expand();
+        }
         t = p[0].split(',');
         var e = Array();
+        if (t.length > 50) {
+          Ext.Msg.alert('Too many time values','This dataset has exceed the maximum number of time possibilities currently allowed (50).  The dataset will be truncated.');
+          t.length = 50;
+        }
         for (var i = 0; i < t.length; i++) {
           e.push({
              start       : t[i].replace(/ /g,'')
@@ -676,13 +683,6 @@ Ext.onReady(function() {
       applyLoader : false
     })
     ,tbar         : ['->',actions["findOnMap"]]
-    ,listeners    : {
-      append      : function(node) {
-        if (node.hasListener('radiochange')) {
-          alert(node.layer.title);
-        }
-      }
-    }
     ,border       : false
   });
 
@@ -771,6 +771,26 @@ Ext.onReady(function() {
     ,split  : true
   });
 
+  timelinePanel = new Ext.Panel({
+     region       : 'south'
+    ,height       : 200
+    ,title        : 'Timeline'
+    ,html         : '<div id="timeline" style="height: 175px"></div>'
+    ,collapsible  : true
+    ,autoScroll   : true
+    ,split        : true
+    ,listeners    : {
+      resize : function(component,adjWidth,adjHeight,rawWidth,rawHeight) {
+        document.getElementById('timeline').style.height = adjHeight - 53;
+        if (tl) {
+          tl.layout();
+        }
+      }
+    }
+    ,tbar        : ['->',actions['clearTimeline']]
+    ,collapsed   : true
+  });
+
   viewport = new Ext.Viewport({
      layout: "border"
     ,items: [
@@ -809,24 +829,7 @@ Ext.onReady(function() {
         ,split        : true
         ,items        : [layerPanel,legendPanel]
       })
-      ,{
-         region       : 'south'
-        ,height       : 200
-        ,title        : 'Timeline'
-        ,html         : '<div id="timeline" style="height: 175px"></div>'
-        ,collapsible  : true
-        ,autoScroll   : true
-        ,split        : true
-        ,listeners    : {
-          resize : function(component,adjWidth,adjHeight,rawWidth,rawHeight) {
-            document.getElementById('timeline').style.height = adjHeight - 53;
-            if (tl) {
-              tl.layout();
-            }
-          }
-        }
-        ,tbar        : ['->',actions['clearTimeline']]
-      }
+      ,timelinePanel
     ]
   });
 
