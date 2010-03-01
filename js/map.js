@@ -1,6 +1,6 @@
 var map;
 var mapPanel;
-var storeGetCaps;
+var storeGetCapsPre,storeGetCaps;
 var winGetCaps;
 var layerPanel;
 var layerTree;
@@ -352,7 +352,7 @@ Ext.onReady(function() {
     ,width       : 350
     ,plain       : true
     ,closeAction : 'hide'
-    ,html        : '<table width=100% cellpadding=0 cellspacing=0> <tr><td class="dirText"><ul class="dirUL"> <li> <table width=100%><tr> <td width=54 class="dirTD"><img src="img/search.png"></td> <td class="dirTD">&nbsp;</td> <td class="dirTD">Begin by entering in a query string into the Google search panel and pressing the Search button. Or follow an example:<br><ol><li><a href="javascript:searchForm.execute(\'water temperature\')">water temperature</a> search (then follow the rest of the help directions below)</li><li><a href="javascript:getLayers(\'http://staging.asascience.com/ecop/wms.aspx?REQUEST=GetCapabilities&VERSION=1.1.1&SERVICE=WMS\')">ASA GetCaps</a> link</li><li><a href="javascript:getLayers(\'http://coastwatch.pfeg.noaa.gov/erddap/wms/erdBAssta5day/request?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities\')">CoastWatch GetCaps</a> link with WMS time support (There is a problem with the published Extents in the GetCaps for the time sensitive SST layer. To get around this, pan/zoom the map to the Eastern hemisphere FIRST, before adding the SST layer to your map.) Click on a value in the Timeline to change the Time parameter.</li></ol></td> </tr></table> </li> <li> <table width=100%><tr> <td align=center width=54 class="dirTD"><img src="img/down1.png">&nbsp;&nbsp;&nbsp;<img src="img/down0.png"></td> <td class="dirTD">&nbsp;</td> <td class="dirTD">Once the search is complete, each Google hit will be followed by either a gray or a green down arrow. A green down arrow indicates at least one GetCapabilities was found on the page. Click the arrow to see the GetCapabilities URL list.</td> </tr></table> </li> <li> <table width=100%><tr> <td align=center width=54 class="dirTD"><img src="img/info1.png"></td> <td class="dirTD">&nbsp;</td> <td class="dirTD">Remember, these links don\'t guarantee a true GetCapabilities result, and they are not restricted to WMS.</td> </tr></table> </li> <li> <table width=100%><tr> <td align=center width=54 class="dirTD"><img src="img/map1.png"></td> <td class="dirTD">&nbsp;</td> <td class="dirTD">Each numbered GetCapabilities link with a Green Arrow will be followed by a Map button. Clicking on this icon will pass the URL to the map which will then list the available layers.</td> </tr></table> </li> <li> <table width=100%><tr> <td align=center width=54 class="dirTD"><img style="margin-top:2px" src="img/hand1.gif"></td> <td class="dirTD">&nbsp;</td> <td class="dirTD">After the map has parsed the GetCapabilities, double-click on a layer name to add it to the map.</td> </tr></table> </li> </ul></td></tr> </table>'
+    ,html        : '<table width=100% cellpadding=0 cellspacing=0> <tr><td class="dirText"><ul class="dirUL"> <li> <table width=100%><tr> <td width=54 class="dirTD"><img src="img/search.png"></td> <td class="dirTD">&nbsp;</td> <td class="dirTD">Begin by entering in a query string into the Google search panel and pressing the Search button. Or follow an example:<br><ol><li><a href="javascript:searchForm.execute(\'water temperature\')">water temperature</a> search (then follow the rest of the help directions below)</li><li><a href="javascript:getLayers(\'http://staging.asascience.com/ecop/wms.aspx?REQUEST=GetCapabilities&VERSION=1.1.1&SERVICE=WMS\')">ASA GetCaps</a> link</li></ol></td> </tr></table> </li> <li> <table width=100%><tr> <td align=center width=54 class="dirTD"><img src="img/down1.png">&nbsp;&nbsp;&nbsp;<img src="img/down0.png"></td> <td class="dirTD">&nbsp;</td> <td class="dirTD">Once the search is complete, each Google hit will be followed by either a gray or a green down arrow. A green down arrow indicates at least one GetCapabilities was found on the page. Click the arrow to see the GetCapabilities URL list.</td> </tr></table> </li> <li> <table width=100%><tr> <td align=center width=54 class="dirTD"><img src="img/info1.png"></td> <td class="dirTD">&nbsp;</td> <td class="dirTD">Remember, these links don\'t guarantee a true GetCapabilities result, and they are not restricted to WMS.</td> </tr></table> </li> <li> <table width=100%><tr> <td align=center width=54 class="dirTD"><img src="img/map1.png"></td> <td class="dirTD">&nbsp;</td> <td class="dirTD">Each numbered GetCapabilities link with a Green Arrow will be followed by a Map button. Clicking on this icon will pass the URL to the map which will then list the available layers.</td> </tr></table> </li> <li> <table width=100%><tr> <td align=center width=54 class="dirTD"><img style="margin-top:2px" src="img/hand1.gif"></td> <td class="dirTD">&nbsp;</td> <td class="dirTD">After the map has parsed the GetCapabilities, double-click on a layer name to add it to the map.</td> </tr></table> </li> </ul></td></tr> </table>'
     ,y           : 30
   });
   action = new Ext.Action({
@@ -475,16 +475,49 @@ Ext.onReady(function() {
   var noData = {
     title : 'No layers found or error processing.'
   };
-  storeGetCaps = new GeoExt.data.WMSCapabilitiesStore();
-  storeGetCaps.on('loadexception',function(loader,node,response) {
-    if (storeGetCaps.getCount() == 0) {
+  storeGetCapsPre = new GeoExt.data.WMSCapabilitiesStore({
+    sortInfo : {
+       field     : 'title'
+      ,direction : 'ASC'
+    }
+  });
+  storeGetCaps    = new GeoExt.data.WMSCapabilitiesStore({
+    sortInfo : {
+       field     : 'title'
+      ,direction : 'ASC'
+    }
+  });
+  storeGetCapsPre.on('beforeload',function() {
+    storeGetCaps.fireEvent('beforeload');
+  });
+  storeGetCapsPre.on('loadexception',function(loader,node,response) {
+    if (storeGetCapsPre.getCount() == 0) {
       storeGetCaps.insert(0,new storeGetCaps.recordType(noData,1));
     }
   });
-  storeGetCaps.on('load',function(loader,node,response) {
-    if (storeGetCaps.getCount() == 0) {
+  storeGetCapsPre.on('load',function(loader,node,response) {
+    if (storeGetCapsPre.getCount() == 0) {
       storeGetCaps.insert(0,new storeGetCaps.recordType(noData,1));
     }
+    else {
+      var i = 0;
+      storeGetCapsPre.each(function(f) {
+        // cheat for a few ASA layers
+        if (String(storeGetCapsPre.proxy.conn.url).indexOf('staging.asascience.com') > 0 && String(f['data']['title']).search(/WW3|Global forecast Winds|HYCOM|AdCirc East|GFS/) >= 0) {
+          var vals = Array();
+          var dt   = new Date();
+          for (var j = 0; j > -10; j--) {
+            vals.push(dt.add(Date.DAY,j).format('Y-m-d')+'T'+dt.add(Date.DAY,j).format('H')+':00Z');
+          }
+          f['data']['dimensions']['time'] = {
+            values : vals.join(',')
+          };
+        }
+        storeGetCaps.insert(i,f);
+        i++;
+      })
+    }
+    storeGetCaps.fireEvent('load');
   });
 
   // create a grid to display records from the store
@@ -788,7 +821,6 @@ Ext.onReady(function() {
       }
     }
     ,tbar        : ['->',actions['clearTimeline']]
-    ,collapsed   : true
   });
 
   viewport = new Ext.Viewport({
@@ -809,7 +841,7 @@ Ext.onReady(function() {
             split: true,
             hidden: true
           }
-        ],
+        ]
       }  
       ,{ 
          region      : "west"
@@ -831,10 +863,10 @@ Ext.onReady(function() {
       })
       ,timelinePanel
     ]
+    ,listeners : {
+      afterlayout : function() {createTl();} 
+    }
   });
-
-  // create the timeline
-  createTl();
 
   // show help at startup
   winHelp.show();
