@@ -8,62 +8,6 @@ var viewport;
 var maxBBOX = new Array();
 var prevProjection;
 var prevZoom = new Array();
-var tl,tlEventSource;
-
-function createTl() {
-  Timeline.OriginalEventPainter.prototype._showBubble = function(x, y, evt) {
-    eval(evt.getDescription());
-  }
-
-  tlEventSource = new Timeline.DefaultEventSource();
-  var bandInfos = [
-    Timeline.createBandInfo({
-       eventSource    : tlEventSource
-      ,date           : new Date()
-      ,width          : "80%"
-      ,intervalUnit   : Timeline.DateTime.MONTH
-      ,intervalPixels : 100
-      ,zoomIndex      : 10
-      ,zoomSteps      : new Array(
-         {pixelsPerInterval: 280,  unit: Timeline.DateTime.HOUR}
-        ,{pixelsPerInterval: 140,  unit: Timeline.DateTime.HOUR}
-        ,{pixelsPerInterval:  70,  unit: Timeline.DateTime.HOUR}
-        ,{pixelsPerInterval:  35,  unit: Timeline.DateTime.HOUR}
-        ,{pixelsPerInterval: 400,  unit: Timeline.DateTime.DAY}
-        ,{pixelsPerInterval: 200,  unit: Timeline.DateTime.DAY}
-        ,{pixelsPerInterval: 100,  unit: Timeline.DateTime.DAY}
-        ,{pixelsPerInterval:  50,  unit: Timeline.DateTime.DAY}
-        ,{pixelsPerInterval: 400,  unit: Timeline.DateTime.MONTH}
-        ,{pixelsPerInterval: 200,  unit: Timeline.DateTime.MONTH}
-        ,{pixelsPerInterval: 100,  unit: Timeline.DateTime.MONTH} // DEFAULT zoomIndex
-      )
-    })
-    ,Timeline.createBandInfo({
-       overview       : true
-      ,eventSource    : tlEventSource
-      ,date           : new Date()
-      ,width          : "20%"
-      ,intervalUnit   : Timeline.DateTime.YEAR
-      ,intervalPixels : 200
-    })
-  ];
-  bandInfos[1].syncWith  = 0;
-  bandInfos[1].highlight = true;
-
-  tl = Timeline.create(document.getElementById("timeline"), bandInfos);
-}
-
-var resizeTimerID = null;
-function onResize() {
-  if (resizeTimerID == null) {
-    resizeTimerID = window.setTimeout(function() {
-      resizeTimerID = null;
-      if (tl) {
-        tl.layout();
-      }
-    }, 500);
-  }
-}
 
 // Earth
 var GoogleEarthPanel;
@@ -353,7 +297,8 @@ Ext.onReady(function() {
     ,plain       : true
     ,closeAction : 'hide'
     ,html        : '<table width=100% cellpadding=0 cellspacing=0> <tr><td class="dirText"><ul class="dirUL"> <li> <table width=100%><tr> <td width=54 class="dirTD"><img src="img/search.png"></td> <td class="dirTD">&nbsp;</td> <td class="dirTD">Begin by entering in a query string into the Google search panel and pressing the Search button. Or follow an example:<br><ol><li><a href="javascript:searchForm.execute(\'water temperature\')">water temperature</a> search (then follow the rest of the help directions below)</li><li><a href="javascript:getLayers(\'http://staging.asascience.com/ecop/wms.aspx?REQUEST=GetCapabilities&VERSION=1.1.1&SERVICE=WMS\')">ASA GetCaps</a> link</li></ol></td> </tr></table> </li> <li> <table width=100%><tr> <td align=center width=54 class="dirTD"><img src="img/down1.png">&nbsp;&nbsp;&nbsp;<img src="img/down0.png"></td> <td class="dirTD">&nbsp;</td> <td class="dirTD">Once the search is complete, each Google hit will be followed by either a gray or a green down arrow. A green down arrow indicates at least one GetCapabilities was found on the page. Click the arrow to see the GetCapabilities URL list.</td> </tr></table> </li> <li> <table width=100%><tr> <td align=center width=54 class="dirTD"><img src="img/info1.png"></td> <td class="dirTD">&nbsp;</td> <td class="dirTD">Remember, these links don\'t guarantee a true GetCapabilities result, and they are not restricted to WMS.</td> </tr></table> </li> <li> <table width=100%><tr> <td align=center width=54 class="dirTD"><img src="img/map1.png"></td> <td class="dirTD">&nbsp;</td> <td class="dirTD">Each numbered GetCapabilities link with a Green Arrow will be followed by a Map button. Clicking on this icon will pass the URL to the map which will then list the available layers.</td> </tr></table> </li> <li> <table width=100%><tr> <td align=center width=54 class="dirTD"><img style="margin-top:2px" src="img/hand1.gif"></td> <td class="dirTD">&nbsp;</td> <td class="dirTD">After the map has parsed the GetCapabilities, double-click on a layer name to add it to the map.</td> </tr></table> </li> </ul></td></tr> </table>'
-    ,y           : 30
+    ,x           : 50
+    ,y           : 300
   });
   action = new Ext.Action({
      text    : "Help & guide"
@@ -462,14 +407,6 @@ Ext.onReady(function() {
     ,handler : function() {findAndZoom(true)}
   });
   actions["findOnMap"] = action;
-
-  action = new Ext.Action({
-     text    : 'Clear timeline'
-    ,iconCls : 'buttonIcon'
-    ,icon    : 'img/trash.png'
-    ,handler : function() {tlEventSource.clear()}
-  });
-  actions["clearTimeline"] = action;
 
   // create a new WMS capabilities store
   var noData = {
@@ -634,6 +571,7 @@ Ext.onReady(function() {
 
     // populate timeline
     if (record.get('dimensions') && record.get('dimensions')['time'] && record.get('dimensions')['time']['values']) {
+      return;
       var p = String(record.get('dimensions')['time']['values']).split('/');
       var gotoTime;
       if (p.length == 1) {
@@ -654,12 +592,10 @@ Ext.onReady(function() {
           });
           gotoTime = t[i].replace(/ /g,'');
         }
-        tlEventSource.loadJSON({events : e},'');
       }
       else {
         return;
       }
-      tl.getBand(0).setCenterVisibleDate(Timeline.DateTime.parseGregorianDateTime(gotoTime));
     }
 
     // zoom to it
@@ -742,7 +678,7 @@ Ext.onReady(function() {
 
   var toolbar = new Ext.Toolbar({
     items: [
-      actions["zoom_in"]
+       actions["zoom_in"]
       ,actions["zoom_out"]
       ,actions["pan"]
       ,actions["zoom_extents"]
@@ -751,31 +687,31 @@ Ext.onReady(function() {
       ,actions["next"]
       ,'->'
       ,{
-        text: 'Google Earth',
-        id: "googleToggle",
-        enableToggle: true,
-        pressed: false,
-        handler: function() {
-            if (this.pressed) {
-                GoogleEarthPanel.add(googleEarthPanelItem);
-                GoogleEarthPanel.setHeight(300);
-                GoogleEarthPanel.setVisible(true);
-                GoogleEarthPanel.doLayout();
-                viewport.doLayout();
-            } else {
-                GoogleEarthPanel.remove('googleEarthPanelItem');
-                GoogleEarthPanel.setHeight(0);
-                GoogleEarthPanel.setVisible(false);
-                GoogleEarthPanel.doLayout();
-                viewport.doLayout();
-            }
+         text          : 'Google Earth'
+        ,id            : "googleToggle"
+        ,enableToggle  : true
+        ,pressed       : false
+        ,handler       : function() {
+          if (this.pressed) {
+            GoogleEarthPanel.add(googleEarthPanelItem);
+            GoogleEarthPanel.setHeight(300);
+            GoogleEarthPanel.setVisible(true);
+            GoogleEarthPanel.doLayout();
+            viewport.doLayout();
+          } else {
+            GoogleEarthPanel.remove('googleEarthPanelItem');
+            GoogleEarthPanel.setHeight(0);
+            GoogleEarthPanel.setVisible(false);
+            GoogleEarthPanel.doLayout();
+            viewport.doLayout();
+          }
         }
         ,iconCls  : 'buttonIcon'
         ,tooltip  : 'Toggle Google Earth window'
         ,icon     : 'img/google_earth.gif'
       },
       {
-        text  : "Help"
+         text : "Help"
         ,menu : new Ext.menu.Menu({
           items : [actions['help'],actions['credits']]
         })
@@ -784,13 +720,13 @@ Ext.onReady(function() {
   });
   
   var googleEarthPanelItem = {
-    xtype: 'gxux_googleearthpanel',
-    id: 'googleEarthPanelItem',
-    map: map,
-    altitude: 50,
-    heading: -60,
-    tilt: 70,
-    range: 700
+     xtype     : 'gxux_googleearthpanel'
+    ,id        : 'googleEarthPanelItem'
+    ,map       : map
+    ,altitude  : 50
+    ,heading   : -60
+    ,tilt      : 70
+    ,range     : 700
   };
 
   
@@ -804,42 +740,23 @@ Ext.onReady(function() {
     ,split  : true
   });
 
-  timelinePanel = new Ext.Panel({
-     region       : 'south'
-    ,height       : 200
-    ,title        : 'Timeline'
-    ,html         : '<div id="timeline" style="height: 175px"></div>'
-    ,collapsible  : true
-    ,autoScroll   : true
-    ,split        : true
-    ,listeners    : {
-      resize : function(component,adjWidth,adjHeight,rawWidth,rawHeight) {
-        document.getElementById('timeline').style.height = adjHeight - 53;
-        if (tl) {
-          tl.layout();
-        }
-      }
-    }
-    ,tbar        : ['->',actions['clearTimeline']]
-  });
-
   viewport = new Ext.Viewport({
      layout: "border"
     ,items: [
       {
-        region: 'center'
-        ,layout: 'border'
-        ,tbar : toolbar
-        ,items:[
-          mapPanel
+         region  : 'center'
+        ,layout  : 'border'
+        ,tbar    : toolbar
+        ,items   : [
+           mapPanel
           ,{
-            region: "south",
-            height: 0,
-            layout: 'fit',
-            id: "googleearthpanel",
-            closeAction: 'hide',
-            split: true,
-            hidden: true
+             region      : "south"
+            ,height      : 0
+            ,layout      : 'fit'
+            ,id          : "googleearthpanel"
+            ,closeAction : 'hide'
+            ,split       : true
+            ,hidden      : true
           }
         ]
       }  
@@ -855,17 +772,13 @@ Ext.onReady(function() {
         ,cls         : 'directions'
       }
       ,new Ext.TabPanel({
-         region       : "east"
-        ,activeTab    : 0
-        ,width        : 250
-        ,split        : true
-        ,items        : [layerPanel,legendPanel]
+         region      : "east"
+        ,activeTab   : 0
+        ,width       : 250
+        ,split       : true
+        ,items       : [layerPanel,legendPanel]
       })
-      ,timelinePanel
     ]
-    ,listeners : {
-      afterlayout : function() {createTl();} 
-    }
   });
 
   // show help at startup
