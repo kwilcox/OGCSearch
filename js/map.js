@@ -818,6 +818,9 @@ Ext.onReady(function() {
   // show help at startup
   winHelp.show();
 
+  // show about at startup
+  winAbout.show();
+
   // populate sample layers
   populateSampleLayers();
 
