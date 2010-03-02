@@ -101,7 +101,6 @@
 }
 #timePanel .x-panel-body {
   background : transparent;
-  background-image:url(../img/bg.png);
 }
 
 #timeSlider .x-slider-thumb {
@@ -109,19 +108,23 @@
 }
 .timeSlider {
   padding-left:20px;
+  background-image:url(../img/bg.png);
 }
 
 .firstTime {
   font-size:10px;
   text-align:left;
+  background-image:url(../img/bg.png);
 }
 .currentTime {
   font-size:10px;
   text-align:center;
+  background-image:url(../img/bg.png);
 }
 .lastTime {
   font-size:10px;
   text-align:right;
+  background-image:url(../img/bg.png);
 }
 
 .x-table-layout-cell {

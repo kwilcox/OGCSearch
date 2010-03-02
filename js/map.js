@@ -10,12 +10,40 @@ var maxBBOX = new Array();
 var prevProjection;
 var prevZoom = new Array();
 var timeSlider,timePanel;
+var timeMin = -24 * 2;
+var timeMax = 24 * 2;
+var timeIncr = 6;
 var t0 = new Date();
 t0 = t0.clearTime();
+var animatedTimer;
+var isAnimating = false;
+var animSpeed = 2500;
 
 // Earth
 var GoogleEarthPanel;
 google.load("earth", "1");
+
+function startSlides() {
+  if (animatedTimer) {
+    clearInterval(animatedTimer);
+  }
+  animatedTimer = setInterval("nextMap()",animSpeed);
+  isAnimating = true;
+}
+
+function stopSlides() {
+  clearInterval(animatedTimer);
+  isAnimating  = false;
+}
+
+function nextMap() {
+  val = timeSlider.getValue();
+  val += timeIncr;
+  if (val > timeSlider.maxValue) {
+    val = timeSlider.minValue;
+  }
+  timeSlider.setValue(val);
+}
 
 function setTimePanelPos() {
   mapPanelPos = mapPanel.getPosition();
@@ -348,6 +376,7 @@ Ext.onReady(function() {
         load : function() {
           addToMap(this.getAt(this.find('name','NCOM_CURRENTS')),'Sample WMS',false,false);
           addToMap(this.getAt(this.find('name','GFS_WINDS')),'Sample WMS',false,false);
+          addToMap(this.getAt(this.find('name','GFS_AIR_PRESSURE')),'Sample WMS',false,false);
         }
       }
     });
@@ -554,6 +583,7 @@ Ext.onReady(function() {
     layer.singleTile  = true;
     layer.visibility  = visibility;
     layer.isBaseLayer = false;
+    layer.transitionEffect = 'resize';
     map.addLayer(layer);
 
     // add the layer to the list
@@ -713,9 +743,9 @@ Ext.onReady(function() {
 
   timeSlider = new Ext.Slider({
      value     : 0
-    ,increment : 6
-    ,minValue  : -24 * 2
-    ,maxValue  : 24 * 2
+    ,increment : timeIncr
+    ,minValue  : timeMin
+    ,maxValue  : timeMax
     ,id        : 'timeSlider'
     ,listeners : {
       change : function(slider,newValue) {
@@ -723,13 +753,13 @@ Ext.onReady(function() {
       }
     }
     ,colspan   : 3
-    ,width     : 160
+    ,width     : 125
     ,cellCls   : 'timeSlider'
   });
 
   firstTime = new Ext.form.Label({
      id   : 'firstTime'
-    ,text : t0.add(Date.HOUR,-24 * 2).format('m-d')+' '+t0.add(Date.HOUR,-24 * 2).format('H')+'Z'
+    ,text : t0.add(Date.HOUR,timeMin).format('m-d')+' '+t0.add(Date.HOUR,timeMin).format('H')+'Z'
     ,cellCls : 'firstTime'
   });
   currentTime = new Ext.form.Label({
@@ -739,20 +769,40 @@ Ext.onReady(function() {
   });
   lastTime = new Ext.form.Label({
      id   : 'lastTime'
-    ,text : t0.add(Date.HOUR,24 * 2).format('m-d')+' '+t0.add(Date.HOUR,24 * 2).format('H')+'Z'
+    ,text : t0.add(Date.HOUR,timeMax).format('m-d')+' '+t0.add(Date.HOUR,timeMax).format('H')+'Z'
     ,cellCls : 'lastTime'
+  });
+  var animPlay = new Ext.Button({
+     icon         : 'img/play.png'
+    ,iconCls      : 'buttonIcon'
+    ,toggleGroup  : 'anim'
+    ,rowspan      : 2
+    ,handler      : function(b,e) {
+      nextMap();
+      startSlides();
+    }
+  });
+  var animPause = new Ext.Button({
+     icon         : 'img/pause.png'
+    ,iconCls      : 'buttonIcon'
+    ,toggleGroup  : 'anim'
+    ,rowspan      : 2
+    ,handler      : function(b,e) {
+      stopSlides()
+    }
+    ,pressed      : true
   });
 
   timePanel = new Ext.Panel({
      renderTo     : Ext.getBody()
     ,id           : 'timePanel'
     ,layout       : 'table'
-    ,items        : [firstTime,currentTime,lastTime,timeSlider]
+    ,items        : [animPlay,animPause,firstTime,currentTime,lastTime,timeSlider]
     ,layoutConfig : {
-      columns : 3
+      columns : 5
     }
     ,border       : false
-    ,width        : 200
+    ,width        : 230
   });
 
   mapPanel = new GeoExt.MapPanel({
@@ -834,7 +884,7 @@ Ext.onReady(function() {
 
 function applyTime(t) {
   for (var i in map.layers) {
-    if (map.layers[i].name.indexOf('.kml') < 0 && !map.layers[i].isBaseLayer && !map.layers[i].name == '') {
+    if (map.layers[i].name && map.layers[i].name.indexOf('.kml') < 0 && !map.layers[i].isBaseLayer) {
       map.layers[i].mergeNewParams({'time':t});
     }
   }
