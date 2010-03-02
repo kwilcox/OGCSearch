@@ -3,15 +3,25 @@ var mapPanel;
 var storeGetCapsPre,storeGetCaps;
 var winGetCaps;
 var layerPanel;
+var tabPanel;
 var layerTree;
 var viewport;
 var maxBBOX = new Array();
 var prevProjection;
 var prevZoom = new Array();
+var timeSlider,timePanel;
+var t0 = new Date();
+t0 = t0.clearTime();
 
 // Earth
 var GoogleEarthPanel;
 google.load("earth", "1");
+
+function setTimePanelPos() {
+  mapPanelPos = mapPanel.getPosition();
+  tabPanelX   = tabPanel.getPosition()[0];
+  timePanel.setPagePosition(tabPanelX - timePanel.getSize().width - 6,mapPanelPos[1] + 1);
+}
 
 function createPopup(feature,selectCtrl,layerKML,t) {
   popup = new GeoExt.Popup({
@@ -336,7 +346,7 @@ Ext.onReady(function() {
     var store = new GeoExt.data.WMSCapabilitiesStore({
       listeners : {
         load : function() {
-          addToMap(this.getAt(this.find('name','FLDA_CURRENTS')),'Sample WMS',false,false);
+          addToMap(this.getAt(this.find('name','NCOM_CURRENTS')),'Sample WMS',false,false);
           addToMap(this.getAt(this.find('name','GFS_WINDS')),'Sample WMS',false,false);
         }
       }
@@ -440,7 +450,7 @@ Ext.onReady(function() {
       var i = 0;
       storeGetCapsPre.each(function(f) {
         // cheat for a few ASA layers
-        if (String(storeGetCapsPre.proxy.conn.url).indexOf('staging.asascience.com') > 0 && String(f['data']['title']).search(/WW3|Global forecast Winds|HYCOM|AdCirc East|GFS/) >= 0) {
+        if (String(storeGetCapsPre.proxy.conn.url).indexOf('staging.asascience.com') > 0 && String(f['data']['title']).search(/Static/) < 0) {
           var vals = Array();
           var dt   = new Date();
           for (var j = 0; j > -10; j--) {
@@ -472,27 +482,28 @@ Ext.onReady(function() {
         }
         return a.join(',');
       }}
-      ,{header : "Time first"     ,dataIndex : "dimensions",sortable : true         ,renderer : function(value,metaData,record,rowIndex,colIndex,store) {
-        if (value['time'] && value['time']['values']) {
-          return String((value['time']['values'])).split('/')[0];
-        }
-      }}
-      ,{header : "Time last"      ,dataIndex : "dimensions",sortable : true         ,renderer : function(value,metaData,record,rowIndex,colIndex,store) {
-        if (value['time'] && value['time']['values']) {
-          return String((value['time']['values'])).split('/')[1];
-        }
-      }}
-      ,{header : "Time resolution",dataIndex : "dimensions",sortable : true         ,renderer : function(value,metaData,record,rowIndex,colIndex,store) {
-        if (value['time'] && value['time']['values']) {
-          return String((value['time']['values'])).split('/')[2];
-        }
-      }}
-      ,{header : "Time default"   ,dataIndex : "dimensions",sortable : true         ,renderer : function(value,metaData,record,rowIndex,colIndex,store) {
-        if (value['time'] && value['time']['default']) {
-            return value['time']['default'];
-        }
-      }}
+//      ,{header : "Time first"     ,dataIndex : "dimensions",sortable : true         ,renderer : function(value,metaData,record,rowIndex,colIndex,store) {
+//        if (value['time'] && value['time']['values']) {
+//          return String((value['time']['values'])).split('/')[0];
+//        }
+//      }}
+//      ,{header : "Time last"      ,dataIndex : "dimensions",sortable : true         ,renderer : function(value,metaData,record,rowIndex,colIndex,store) {
+//        if (value['time'] && value['time']['values']) {
+//          return String((value['time']['values'])).split('/')[1];
+//        }
+//      }}
+//      ,{header : "Time resolution",dataIndex : "dimensions",sortable : true         ,renderer : function(value,metaData,record,rowIndex,colIndex,store) {
+//        if (value['time'] && value['time']['values']) {
+//          return String((value['time']['values'])).split('/')[2];
+//        }
+//      }}
+//      ,{header : "Time default"   ,dataIndex : "dimensions",sortable : true         ,renderer : function(value,metaData,record,rowIndex,colIndex,store) {
+//        if (value['time'] && value['time']['default']) {
+//            return value['time']['default'];
+//        }
+//      }}
     ]
+    ,autoExpandColumn : 'title'
     ,listeners        : {
       rowdblclick : function(grid,index) {
         // decided not to snapto zoom
@@ -569,35 +580,6 @@ Ext.onReady(function() {
       ,srs  : srs
     };
 
-    // populate timeline
-    if (record.get('dimensions') && record.get('dimensions')['time'] && record.get('dimensions')['time']['values']) {
-      return;
-      var p = String(record.get('dimensions')['time']['values']).split('/');
-      var gotoTime;
-      if (p.length == 1) {
-        if (timelinePanel.collapsed) {
-          timelinePanel.expand();
-        }
-        t = p[0].split(',');
-        var e = Array();
-        if (t.length > 50) {
-          Ext.Msg.alert('Too many time values','This dataset has exceed the maximum number of time possibilities currently allowed (50).  The dataset will be truncated.');
-          t.length = 50;
-        }
-        for (var i = 0; i < t.length; i++) {
-          e.push({
-             start       : t[i].replace(/ /g,'')
-            ,title       : record.get("title").substring(0,5)
-            ,description : "applyTime(\"" + record.get("title") + "\",\"" + t[i].replace(/ /g,'') + "\")"
-          });
-          gotoTime = t[i].replace(/ /g,'');
-        }
-      }
-      else {
-        return;
-      }
-    }
-
     // zoom to it
     if (zoom) {
       map.zoomToExtent(maxBBOX[record.get("title")].bbox.transform(maxBBOX[record.get("title")].epsg,map.getProjectionObject()));
@@ -618,7 +600,7 @@ Ext.onReady(function() {
     ,layout      : 'fit'
     ,maximizable : true
     ,tbar: [
-      'Double click a row to add the layer to the map. Only enumerated time series is supported.'
+      'Double click a row to add the layer to the map.'
     ]
   });
 
@@ -718,7 +700,7 @@ Ext.onReady(function() {
       }
     ]
   });
-  
+
   var googleEarthPanelItem = {
      xtype     : 'gxux_googleearthpanel'
     ,id        : 'googleEarthPanelItem'
@@ -729,7 +711,48 @@ Ext.onReady(function() {
     ,range     : 700
   };
 
-  
+  timeSlider = new Ext.Slider({
+     value     : 0
+    ,increment : 3
+    ,minValue  : -24 * 2
+    ,maxValue  : 24 * 2
+    ,id        : 'timeSlider'
+    ,listeners : {
+      change : function(slider,newValue) {
+        applyTime(t0.add(Date.HOUR,newValue).format('Y-m-d')+'T'+t0.add(Date.HOUR,newValue).format('H')+':00Z');
+      }
+    }
+    ,colspan   : 3
+  });
+
+  firstTime = new Ext.form.Label({
+     id   : 'firstTime'
+    ,text : t0.add(Date.HOUR,-24 * 2).format('m-d')+' '+t0.add(Date.HOUR,-24 * 2).format('H')+'Z'
+    ,cellCls : 'firstTime'
+  });
+  currentTime = new Ext.form.Label({
+     id   : 'currentTime'
+    ,text : t0.add(Date.HOUR,0).format('m-d')+' '+t0.add(Date.HOUR,0).format('H')+'Z'
+    ,cellCls : 'currentTime'
+  });
+  lastTime = new Ext.form.Label({
+     id   : 'lastTime'
+    ,text : t0.add(Date.HOUR,24 * 2).format('m-d')+' '+t0.add(Date.HOUR,24 * 2).format('H')+'Z'
+    ,cellCls : 'lastTime'
+  });
+
+  timePanel = new Ext.Panel({
+     renderTo     : Ext.getBody()
+    ,id           : 'timePanel'
+    ,layout       : 'table'
+    ,items        : [firstTime,currentTime,lastTime,timeSlider]
+    ,layoutConfig : {
+      columns : 3
+    }
+    ,border       : false
+    ,width        : 200
+  });
+
   mapPanel = new GeoExt.MapPanel({
      region : "center"
     ,id     : "mappanel"
@@ -738,6 +761,19 @@ Ext.onReady(function() {
     ,layers : layerStore
     ,zoom   : 1
     ,split  : true
+    ,listeners : {
+      resize : function() {
+        setTimePanelPos();
+      }
+    }
+  });
+
+  tabPanel = new Ext.TabPanel({
+     region      : "east"
+    ,activeTab   : 0
+    ,width       : 250
+    ,split       : true
+    ,items       : [layerPanel,legendPanel]
   });
 
   viewport = new Ext.Viewport({
@@ -771,13 +807,7 @@ Ext.onReady(function() {
         ,html        : '<table><tr><td>Enter Google search terms or a complete GetCapabilties web address or a KML file web address. See the Help button above the map panel for examples.</td></tr></table>'
         ,cls         : 'directions'
       }
-      ,new Ext.TabPanel({
-         region      : "east"
-        ,activeTab   : 0
-        ,width       : 250
-        ,split       : true
-        ,items       : [layerPanel,legendPanel]
-      })
+      ,tabPanel
     ]
   });
 
@@ -787,6 +817,9 @@ Ext.onReady(function() {
   // populate sample layers
   populateSampleLayers();
 
+  // apply t0
+  applyTime(t0);
+
   // set the base layer & initial zoom
   map.setBaseLayer(layerBlueMarble4326);
   map.setCenter(new OpenLayers.LonLat(-100,40),4);
@@ -795,13 +828,12 @@ Ext.onReady(function() {
   // Earth
   GoogleEarthPanel = Ext.getCmp("googleearthpanel");
   GoogleEarthPanel.add(googleEarthPanelItem);
-
 });
 
-function applyTime(lName,lTime) {
+function applyTime(t) {
   for (var i in map.layers) {
-    if (map.layers[i].name == lName) {
-      map.layers[i].mergeNewParams({'time':lTime});
+    if (map.layers[i].name.indexOf('.kml') < 0 && !map.layers[i].isBaseLayer && !map.layers[i].name == '') {
+      map.layers[i].mergeNewParams({'time':t});
     }
   }
 }

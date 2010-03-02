@@ -95,3 +95,32 @@
 .timeline-band-events {
   font-size:11px;
 }
+
+#timePanel {
+  position   : absolute;
+}
+#timePanel .x-panel-body {
+  background : transparent;
+  background-image:url(../img/bg.png);
+}
+
+#timeSlider .x-slider-thumb {
+  background-image:url(../img/slider-thumb.png);
+}
+
+.firstTime {
+  font-size:10px;
+  text-align:left;
+}
+.currentTime {
+  font-size:10px;
+  text-align:center;
+}
+.lastTime {
+  font-size:10px;
+  text-align:right;
+}
+
+.x-table-layout-cell {
+  width:200px;
+}
