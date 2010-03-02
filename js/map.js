@@ -713,7 +713,7 @@ Ext.onReady(function() {
 
   timeSlider = new Ext.Slider({
      value     : 0
-    ,increment : 3
+    ,increment : 6
     ,minValue  : -24 * 2
     ,maxValue  : 24 * 2
     ,id        : 'timeSlider'
@@ -723,6 +723,8 @@ Ext.onReady(function() {
       }
     }
     ,colspan   : 3
+    ,width     : 160
+    ,cellCls   : 'timeSlider'
   });
 
   firstTime = new Ext.form.Label({

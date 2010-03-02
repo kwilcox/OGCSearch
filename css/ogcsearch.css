@@ -107,6 +107,9 @@
 #timeSlider .x-slider-thumb {
   background-image:url(../img/slider-thumb.png);
 }
+.timeSlider {
+  padding-left:20px;
+}
 
 .firstTime {
   font-size:10px;
