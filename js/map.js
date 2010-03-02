@@ -20,7 +20,7 @@ google.load("earth", "1");
 function setTimePanelPos() {
   mapPanelPos = mapPanel.getPosition();
   tabPanelX   = tabPanel.getPosition()[0];
-  timePanel.setPagePosition(tabPanelX - timePanel.getSize().width - 6,mapPanelPos[1] + 1);
+  timePanel.setPagePosition(tabPanelX - timePanel.getSize().width - 7,mapPanelPos[1] + 1);
 }
 
 function createPopup(feature,selectCtrl,layerKML,t) {
