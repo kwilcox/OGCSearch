@@ -1,6 +1,6 @@
 var map;
 var mapPanel;
-var storeGetCapsPre,storeGetCaps;
+var storeGetCaps;
 var winGetCaps;
 var layerPanel;
 var tabPanel;
@@ -451,49 +451,21 @@ Ext.onReady(function() {
   var noData = {
     title : 'No layers found or error processing.'
   };
-  storeGetCapsPre = new GeoExt.data.WMSCapabilitiesStore({
-    sortInfo : {
-       field     : 'title'
-      ,direction : 'ASC'
-    }
-  });
   storeGetCaps    = new GeoExt.data.WMSCapabilitiesStore({
     sortInfo : {
        field     : 'title'
       ,direction : 'ASC'
     }
   });
-  storeGetCapsPre.on('beforeload',function() {
-    storeGetCaps.fireEvent('beforeload');
-  });
-  storeGetCapsPre.on('loadexception',function(loader,node,response) {
-    if (storeGetCapsPre.getCount() == 0) {
+  storeGetCaps.on('loadexception',function(loader,node,response) {
+    if (storeGetCaps.getCount() == 0) {
       storeGetCaps.insert(0,new storeGetCaps.recordType(noData,1));
     }
   });
-  storeGetCapsPre.on('load',function(loader,node,response) {
-    if (storeGetCapsPre.getCount() == 0) {
+  storeGetCaps.on('load',function(loader,node,response) {
+    if (storeGetCaps.getCount() == 0) {
       storeGetCaps.insert(0,new storeGetCaps.recordType(noData,1));
     }
-    else {
-      var i = 0;
-      storeGetCapsPre.each(function(f) {
-        // cheat for a few ASA layers
-        if (String(storeGetCapsPre.proxy.conn.url).indexOf('staging.asascience.com') > 0 && String(f['data']['title']).search(/Static/) < 0) {
-          var vals = Array();
-          var dt   = new Date();
-          for (var j = 0; j > -10; j--) {
-            vals.push(dt.add(Date.DAY,j).format('Y-m-d')+'T'+dt.add(Date.DAY,j).format('H')+':00Z');
-          }
-          f['data']['dimensions']['time'] = {
-            values : vals.join(',')
-          };
-        }
-        storeGetCaps.insert(i,f);
-        i++;
-      })
-    }
-    storeGetCaps.fireEvent('load');
   });
 
   // create a grid to display records from the store
@@ -511,26 +483,6 @@ Ext.onReady(function() {
         }
         return a.join(',');
       }}
-//      ,{header : "Time first"     ,dataIndex : "dimensions",sortable : true         ,renderer : function(value,metaData,record,rowIndex,colIndex,store) {
-//        if (value['time'] && value['time']['values']) {
-//          return String((value['time']['values'])).split('/')[0];
-//        }
-//      }}
-//      ,{header : "Time last"      ,dataIndex : "dimensions",sortable : true         ,renderer : function(value,metaData,record,rowIndex,colIndex,store) {
-//        if (value['time'] && value['time']['values']) {
-//          return String((value['time']['values'])).split('/')[1];
-//        }
-//      }}
-//      ,{header : "Time resolution",dataIndex : "dimensions",sortable : true         ,renderer : function(value,metaData,record,rowIndex,colIndex,store) {
-//        if (value['time'] && value['time']['values']) {
-//          return String((value['time']['values'])).split('/')[2];
-//        }
-//      }}
-//      ,{header : "Time default"   ,dataIndex : "dimensions",sortable : true         ,renderer : function(value,metaData,record,rowIndex,colIndex,store) {
-//        if (value['time'] && value['time']['default']) {
-//            return value['time']['default'];
-//        }
-//      }}
     ]
     ,autoExpandColumn : 'title'
     ,listeners        : {

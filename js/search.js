@@ -121,10 +121,9 @@ function getLayers(uri) {
     if (!winGetCaps.rendered || winGetCaps.hidden) {
       winGetCaps.show();
     }
-    storeGetCapsPre.removeAll();
     storeGetCaps.removeAll();
-    storeGetCapsPre.proxy.conn.url = proxyLoc+escape(uri);
-    storeGetCapsPre.load();
+    storeGetCaps.proxy.conn.url = proxyLoc+escape(uri);
+    storeGetCaps.load();
   }
 }
 
