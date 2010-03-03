@@ -447,6 +447,21 @@ Ext.onReady(function() {
   });
   actions["findOnMap"] = action;
 
+  action = new Ext.Action({
+     text    : 'Add custom URL'
+    ,tooltip : "Enter a custom GetCapabilities URL or a web address of a KML file."
+    ,iconCls : 'buttonIcon'
+    ,icon    : 'img/add.png'
+    ,handler : function() {
+      Ext.Msg.prompt('Add custom URL','Enter a complete GetCapabilities URL or a complete web address of a KML file.',function(btn,txt) {
+        if (btn == 'ok') {
+          getLayers(txt);
+        } 
+      })
+    }
+  });
+  actions["addCustomURL"] = action;
+
   // create a new WMS capabilities store
   var noData = {
     title : 'No layers found or error processing.'
@@ -615,7 +630,7 @@ Ext.onReady(function() {
     ,loader       : new Ext.tree.TreeLoader({
       applyLoader : false
     })
-    ,tbar         : ['->',actions["findOnMap"]]
+    ,tbar         : [actions["addCustomURL"],'->',actions["findOnMap"]]
     ,border       : false
   });
 
