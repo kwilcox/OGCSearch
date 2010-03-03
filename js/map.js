@@ -440,7 +440,7 @@ Ext.onReady(function() {
 
   action = new Ext.Action({
      text    : 'Zoom to visible layers'
-    ,tooltip : "Zoom to the bounds containing all visible layers. To zoom to individual layers, double click the layer name the the Active layer list."
+    ,tooltip : "Zoom to the bounds containing all visible layers. To zoom to individual layers, double click the layer name in the layer list."
     ,iconCls : 'buttonIcon'
     ,icon    : 'img/search_zoom.png'
     ,handler : function() {findAndZoom(true)}
