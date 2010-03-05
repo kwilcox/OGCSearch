@@ -439,7 +439,6 @@ Ext.onReady(function() {
               firstTime.setText(t0.add(Date.HOUR,timeSlider.minValue).format('m-d')+' '+t0.add(Date.HOUR,timeSlider.minValue).format('H')+'Z');
               lastTime.setText(t0.add(Date.HOUR,timeSlider.maxValue).format('m-d')+' '+t0.add(Date.HOUR,timeSlider.maxValue).format('H')+'Z');
               timeSlider.setValue(timeSlider.minValue);
-              applyTime(t0.add(Date.HOUR,timeSlider.minValue));
               winDateRange.hide();
             }
           }
