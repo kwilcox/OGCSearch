@@ -407,7 +407,7 @@ Ext.onReady(function() {
               var secFirst = dp0.getValue().format('U');
               var secLast  = dp1.getValue().format('U');
               t0.setTime((secFirst*1000+secLast*1000)/2);
-              timeFactor = (secLast - secFirst) / 3600 / sliderSpanHours;
+              timeFactor = (secLast - secFirst) / 3600 / sliderSpan;
               middleTime.setText(t0.add(Date.HOUR,0).format('m-d')+' '+t0.add(Date.HOUR,0).format('H')+'Z');
               firstTime.setText(t0.add(Date.HOUR,timeSlider.minValue).format('m-d')+' '+t0.add(Date.HOUR,timeSlider.minValue).format('H')+'Z');
               lastTime.setText(t0.add(Date.HOUR,timeSlider.maxValue).format('m-d')+' '+t0.add(Date.HOUR,timeSlider.maxValue).format('H')+'Z');
@@ -450,7 +450,10 @@ Ext.onReady(function() {
     store = new GeoExt.data.WMSCapabilitiesStore({
       listeners : {
         load : function() {
-          addToMap(this.getAt(this.find('name','OWLS')),'Sample WMS',false,false);
+          addToMap(this.getAt(this.find('name','elcirc')),'Sample WMS',false,false);
+          addToMap(this.getAt(this.find('name','fvcom_massbay_currents')),'Sample WMS',false,false);
+          addToMap(this.getAt(this.find('name','fvcom_massbay_salt')),'Sample WMS',false,false);
+          addToMap(this.getAt(this.find('name','fvcom_massbay_temp')),'Sample WMS',false,false);
         }
       }
       ,proxy: new Ext.data.HttpProxy({
@@ -458,7 +461,7 @@ Ext.onReady(function() {
       })
     });
     store.removeAll();
-    u = 'http://www.bsc-eoc.org/cgi-bin/bsc_ows.asp?service=WMS&version=1.1.1&request=GetCapabilities';
+    u = 'http://24.249.210.124:8080/wmsprovider?service=wms&version=1.1.1&request=GetCapabilities';
     purl = proxyLoc ? proxyLoc + escape(u) : u;
     store.proxy.conn.url = purl
     store.load();
@@ -466,7 +469,8 @@ Ext.onReady(function() {
     store = new GeoExt.data.WMSCapabilitiesStore({
       listeners : {
         load : function() {
-          addToMap(this.getAt(this.find('name','DNI_NREL_Mod')),'Sample WMS',false,false);
+          addToMap(this.getAt(this.find('name','akq-fmrc/Temperature')),'Sample WMS',false,false);
+          addToMap(this.getAt(this.find('name','akq-fmrc/Geopotential_height')),'Sample WMS',false,false);
         }
       }
       ,proxy: new Ext.data.HttpProxy({
@@ -474,11 +478,27 @@ Ext.onReady(function() {
       })
     });
     store.removeAll();
-    u = 'http://na.unep.net/cgi-bin/DNI?request=getcapabilities&Service=wms&version=1.1.1';
+    u = 'http://24.249.210.121:8080/ncWMS/wms?SERVICE=WMS&REQUEST=GetCapabilities&VERSION=1.1.1';
     purl = proxyLoc ? proxyLoc + escape(u) : u;
-    store.proxy.conn.url = purl;
+    store.proxy.conn.url = purl
     store.load();
-    
+
+    store = new GeoExt.data.WMSCapabilitiesStore({
+      listeners : {
+        load : function() {
+          addToMap(this.getAt(this.find('name','country_bnd')),'Sample WMS',false,false);
+        }
+      }
+      ,proxy: new Ext.data.HttpProxy({
+        url: proxyLoc
+      })
+    });
+    store.removeAll();
+    u = 'http://geonetwork3.fao.org/ows/14129?SERVICE=WMS&REQUEST=GetCapabilities';
+    purl = proxyLoc ? proxyLoc + escape(u) : u;
+    store.proxy.conn.url = purl
+    store.load();
+
     addKMLToMap(document.location+'kml/emilyir.kml','Sample KML',false);
     addKMLToMap(document.location+'kml/4000_New.kml','Sample KML',false); 
     addKMLToMap(document.location+'kml/Base_WaterLevel_new.kml','Sample KML',false);
@@ -618,6 +638,7 @@ Ext.onReady(function() {
     layer.isBaseLayer = false;
     layer.transitionEffect = 'resize';
     map.addLayer(layer);
+    keepTopLayersAtTop();
 
     // add the layer to the list
     var layerNode = new Ext.data.Node({
@@ -782,7 +803,7 @@ Ext.onReady(function() {
     ,id        : 'timeSlider'
     ,listeners : {
       change : function(slider,newValue) {
-        applyTime(t0.add(Date.HOUR,newValue * timeFactor).format('Y-m-d')+'T'+t0.add(Date.HOUR,newValue * timeFactor).format('H')+':00Z');
+        applyTime(t0.add(Date.HOUR,newValue * timeFactor).format('Y-m-d')+'T'+t0.add(Date.HOUR,newValue * timeFactor).format('H')+':00');
         currentTime.setText('Map time : ' + t0.add(Date.HOUR,newValue * timeFactor).format('Y-m-d')+' '+t0.add(Date.HOUR,newValue * timeFactor).format('H')+'Z');
       }
     }
@@ -940,6 +961,14 @@ function applyTime(t) {
   for (var i in map.layers) {
     if (map.layers[i].name && map.layers[i].name.indexOf('.kml') < 0 && !map.layers[i].isBaseLayer) {
       map.layers[i].mergeNewParams({'time':t});
+    }
+  }
+}
+
+function keepTopLayersAtTop() {
+  for (var i in map.layers) {
+    if (map.layers[i].name == 'Coastal and country boundaries of the world') {
+      map.setLayerIndex(map.layers[i],map.layers.length-1);
     }
   }
 }
