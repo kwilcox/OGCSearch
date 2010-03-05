@@ -12,12 +12,17 @@ var prevZoom = new Array();
 var timeSlider,timePanel;
 var timeMin = -24 * 2;
 var timeMax = 24 * 2;
-var timeIncr = 6;
+var timeIncr = 3;
+var timeIncrFactor = 1;
+var timeSteps = 32;
 var t0 = new Date();
 t0 = t0.clearTime();
 var animatedTimer;
 var isAnimating = false;
 var animSpeed = 2500;
+var dp0,dp1;
+var animPause,animPlay;
+var firstTime,lastTime,middleTime,currentTime;
 
 // Earth
 var GoogleEarthPanel;
@@ -38,7 +43,7 @@ function stopSlides() {
 
 function nextMap() {
   val = timeSlider.getValue();
-  val += timeIncr;
+  val += timeIncr * timeIncrFactor;
   if (val > timeSlider.maxValue) {
     val = timeSlider.minValue;
   }
@@ -367,8 +372,89 @@ Ext.onReady(function() {
   });
   actions["credits"] = action;
 
+  dp0 = new Ext.DatePicker({cls : 'datePicker'});
+  dp1 = new Ext.DatePicker({cls : 'datePicker'});
+
+  var winDateRange = new Ext.Window({
+     id          : 'extDateRangeWin'
+    ,width       : 500
+    ,height      : 340
+    ,layout      : 'fit'
+    ,title       : 'Date range'
+    ,modal       : true
+    ,closable    : false
+    ,items       : {
+       id        : 'extDateRangeForm'
+      ,xtype     : 'form'
+      ,layout    : 'column'
+      ,frame     : true
+      ,labelWidth : 50
+      ,defaults   : {
+         columnWidth : 0.5
+        ,layout      : 'form'
+        ,hideLables  : true
+        ,border      : false
+        ,bodyStyle   : 'padding:4px'
+      }
+      ,items        : [
+        {
+           html : 'Select first/last dates for the time slider.  The slider increment will be calculated automatically.'
+          ,columnWidth : 1
+        }
+        ,{
+           defaults:{xtype:'fieldset',layout:'form',anchor:'100%',autoHeight:true}
+          ,items:[{
+             title : 'First date'
+            ,defaults : {anchor:'-20'}
+            ,items : [dp0]
+          }]
+        }
+        ,{
+           defaults:{xtype:'fieldset',layout:'form',anchor:'100%',autoHeight:true}
+          ,items:[{
+             title : 'Last date'
+            ,defaults : {anchor:'-20'}
+            ,items : [dp1]
+          }]
+        }
+      ]
+      ,buttonAlign:'right'
+      ,buttons : [
+        {
+           text:'OK'
+          ,handler : function() {
+            if (dp0.getValue() >= dp1.getValue()) {
+              Ext.Msg.alert('Date range error','The first date cannot be greater than or equal to the last date.  Please check your selection and try again.');
+            }
+            else {
+              animPause.toggle(true);
+              stopSlides();
+              var secFirst = dp0.getValue().format('U');
+              var secLast  = dp1.getValue().format('U');
+              t0.setTime((secFirst*1000+secLast*1000)/2);
+              timeIncrFactor = (secLast - secFirst) / 3600 / timeSteps / timeIncr;
+              timeSlider.setMinValue(-1 * (secLast - secFirst) / 3600 / 2);
+              timeSlider.setMaxValue((secLast - secFirst) / 3600 / 2);
+              middleTime.setText(t0.add(Date.HOUR,0).format('m-d')+' '+t0.add(Date.HOUR,0).format('H')+'Z');
+              firstTime.setText(t0.add(Date.HOUR,timeSlider.minValue).format('m-d')+' '+t0.add(Date.HOUR,timeSlider.minValue).format('H')+'Z');
+              lastTime.setText(t0.add(Date.HOUR,timeSlider.maxValue).format('m-d')+' '+t0.add(Date.HOUR,timeSlider.maxValue).format('H')+'Z');
+              timeSlider.setValue(timeSlider.minValue);
+              applyTime(t0.add(Date.HOUR,timeSlider.minValue));
+              winDateRange.hide();
+            }
+          }
+        }
+        ,{
+           text:'Cancel'
+          ,handler : function() {
+            winDateRange.hide();
+          }
+        }
+      ]
+    }
+  });
+
   function populateSampleLayers() {
-    
     var purl, u;
     
     var store = new GeoExt.data.WMSCapabilitiesStore({
@@ -379,9 +465,11 @@ Ext.onReady(function() {
           addToMap(this.getAt(this.find('name','GFS_AIR_PRESSURE')),'Sample WMS',false,false);
         }
       }
+      ,proxy: new Ext.data.HttpProxy({
+        url: proxyLoc
+      })
     });
     store.removeAll();
-    
     u = 'http://staging.asascience.com/ecop/wms.aspx?REQUEST=GetCapabilities&VERSION=1.1.1&SERVICE=WMS';
     purl = proxyLoc ? proxyLoc + escape(u) : u;
     store.proxy.conn.url = purl
@@ -393,9 +481,11 @@ Ext.onReady(function() {
           addToMap(this.getAt(this.find('name','OWLS')),'Sample WMS',false,false);
         }
       }
+      ,proxy: new Ext.data.HttpProxy({
+        url: proxyLoc
+      })
     });
     store.removeAll();
-    
     u = 'http://www.bsc-eoc.org/cgi-bin/bsc_ows.asp?service=WMS&version=1.1.1&request=GetCapabilities';
     purl = proxyLoc ? proxyLoc + escape(u) : u;
     store.proxy.conn.url = purl
@@ -407,14 +497,15 @@ Ext.onReady(function() {
           addToMap(this.getAt(this.find('name','DNI_NREL_Mod')),'Sample WMS',false,false);
         }
       }
+      ,proxy: new Ext.data.HttpProxy({
+        url: proxyLoc
+      })
     });
     store.removeAll();
-    
     u = 'http://na.unep.net/cgi-bin/DNI?request=getcapabilities&Service=wms&version=1.1.1';
     purl = proxyLoc ? proxyLoc + escape(u) : u;
     store.proxy.conn.url = purl;
     store.load();
-    
     
     u = 'http://www.gearthblog.com/kmfiles/emilyir.kml';
     purl = proxyLoc ? proxyLoc + escape(u) : u;
@@ -471,6 +562,9 @@ Ext.onReady(function() {
        field     : 'title'
       ,direction : 'ASC'
     }
+    ,proxy: new Ext.data.HttpProxy({
+      url: proxyLoc
+    })
   });
   storeGetCaps.on('loadexception',function(loader,node,response) {
     if (storeGetCaps.getCount() == 0) {
@@ -717,6 +811,7 @@ Ext.onReady(function() {
     ,listeners : {
       change : function(slider,newValue) {
         applyTime(t0.add(Date.HOUR,newValue).format('Y-m-d')+'T'+t0.add(Date.HOUR,newValue).format('H')+':00Z');
+        currentTime.setText('Map time : ' + t0.add(Date.HOUR,newValue).format('Y-m-d')+' '+t0.add(Date.HOUR,newValue).format('H')+'Z');
       }
     }
     ,colspan   : 3
@@ -726,47 +821,64 @@ Ext.onReady(function() {
 
   firstTime = new Ext.form.Label({
      id   : 'firstTime'
-    ,text : t0.add(Date.HOUR,timeMin).format('m-d')+' '+t0.add(Date.HOUR,timeMin).format('H')+'Z'
+    ,text : t0.add(Date.HOUR,timeSlider.minValue).format('m-d')+' '+t0.add(Date.HOUR,timeSlider.minValue).format('H')+'Z'
     ,cellCls : 'firstTime'
   });
-  currentTime = new Ext.form.Label({
-     id   : 'currentTime'
+  middleTime = new Ext.form.Label({
+     id   : 'middleTime'
     ,text : t0.add(Date.HOUR,0).format('m-d')+' '+t0.add(Date.HOUR,0).format('H')+'Z'
-    ,cellCls : 'currentTime'
+    ,cellCls : 'middleTime'
   });
   lastTime = new Ext.form.Label({
      id   : 'lastTime'
-    ,text : t0.add(Date.HOUR,timeMax).format('m-d')+' '+t0.add(Date.HOUR,timeMax).format('H')+'Z'
+    ,text : t0.add(Date.HOUR,timeSlider.maxValue).format('m-d')+' '+t0.add(Date.HOUR,timeSlider.maxValue).format('H')+'Z'
     ,cellCls : 'lastTime'
   });
-  var animPlay = new Ext.Button({
+  currentTime = new Ext.form.Label({
+     id   : 'currentTime'
+    ,text : 'Map time : ' + t0.add(Date.HOUR,0).format('Y-m-d')+' '+t0.add(Date.HOUR,0).format('H')+'Z'
+    ,cellCls : 'middleTime'
+    ,colspan : 3
+  });
+  animPlay = new Ext.Button({
      icon         : 'img/play.png'
     ,iconCls      : 'buttonIcon'
     ,toggleGroup  : 'anim'
-    ,rowspan      : 2
+    ,rowspan      : 3
     ,handler      : function(b,e) {
       nextMap();
       startSlides();
     }
   });
-  var animPause = new Ext.Button({
+  animPause = new Ext.Button({
      icon         : 'img/pause.png'
     ,iconCls      : 'buttonIcon'
     ,toggleGroup  : 'anim'
-    ,rowspan      : 2
+    ,rowspan      : 3
     ,handler      : function(b,e) {
       stopSlides()
     }
     ,pressed      : true
   });
 
+  sliderCalendar = new Ext.Button({
+     icon         : 'img/calendar.png'
+    ,iconCls      : 'buttonIcon'
+    ,rowspan      : 3
+    ,handler      : function(b,e) {
+      if (!winDateRange.rendered || winDateRange.hidden) {
+        winDateRange.show();
+      }
+    }
+  });
+
   timePanel = new Ext.Panel({
      renderTo     : Ext.getBody()
     ,id           : 'timePanel'
     ,layout       : 'table'
-    ,items        : [animPlay,animPause,firstTime,currentTime,lastTime,timeSlider]
+    ,items        : [animPlay,animPause,firstTime,middleTime,lastTime,sliderCalendar,timeSlider,currentTime]
     ,layoutConfig : {
-      columns : 5
+      columns : 6
     }
     ,border       : false
     ,width        : 230

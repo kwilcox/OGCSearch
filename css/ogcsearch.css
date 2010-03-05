@@ -116,7 +116,7 @@
   text-align:left;
   background-image:url(../img/bg.png);
 }
-.currentTime {
+.middleTime {
   font-size:10px;
   text-align:center;
   background-image:url(../img/bg.png);
@@ -129,4 +129,12 @@
 
 .x-table-layout-cell {
   width:200px;
+}
+
+.dateRangeHdr {
+  font-size:11px;
+}
+
+.datePicker {
+  margin-left:10px;
 }
