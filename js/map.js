@@ -90,45 +90,22 @@ function addKMLToMap(u,category,visibility) {
   });
   // get KML filename to use as layer name
   var p = u.split('/');
-  var layerKML = new OpenLayers.Layer.Vector(p[p.length-1]);
-  var storeKML = new GeoExt.data.FeatureStore({
-     layer : layerKML
-    ,proxy : proxyKML
-    ,fields: [
-        {name : 'title'      , type : 'string'},
-        {name : 'description', type : 'string'}
-    ]
-    ,autoLoad : true
-  });
-  storeKML.on('loadexception',function() {
-    if (storeKML.getCount() == 0) {
-      Ext.Msg.alert('KML alert','There was a problem processing the KML.');
+  var layerKML = new OpenLayers.Layer.GML(
+     p[p.length-1]
+    ,purl
+    ,{
+       format        : OpenLayers.Format.KML
+      ,projection    : map.displayProjection
+      ,formatOptions : {
+         extractStyles    : true
+        ,extractAttributes: true
+      }
     }
-  });
-  storeKML.on('load',function() {
-    if (storeKML.getCount() == 0) {
-      Ext.Msg.alert('KML alert','There was a problem processing the KML.');
-    }
-  });
-
-  // create select feature control
-  var selectCtrl = new OpenLayers.Control.SelectFeature(layerKML);
-  // create popup on "featureselected"
-  layerKML.events.on({
-    featureselected : function(e) {
-      createPopup(e.feature,selectCtrl,layerKML,p[p.length-1]);
-    }
-  });
-  if (visibility) {
-    var myMask = new Ext.LoadMask(Ext.getBody(), {msg:"Loading KML...",store:storeKML});
-    myMask.show();
-  }
+  );
 
   // add it to the map
   layerKML.visibility = visibility;
   map.addLayer(layerKML);
-  map.addControl(selectCtrl);
-  selectCtrl.activate();
 
   // add the layer to the list
   var layerNode = new Ext.data.Node({
@@ -506,9 +483,9 @@ Ext.onReady(function() {
     store.proxy.conn.url = purl;
     store.load();
     
-    u = 'http://www.gearthblog.com/kmfiles/emilyir.kml';
-    purl = proxyLoc ? proxyLoc + escape(u) : u;
-    addKMLToMap(u,'Sample KML',false);
+    addKMLToMap(document.location+'kml/emilyir.kml','Sample KML',false);
+    addKMLToMap(document.location+'kml/4000_New.kml','Sample KML',false); 
+    addKMLToMap(document.location+'kml/Base_WaterLevel_new.kml','Sample KML',false);
   }
 
   function findAndZoom(warn) {

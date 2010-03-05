@@ -1,0 +1,735 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://earth.google.com/kml/2.0">
+<Document>
+  <description>Hurricane Emily</description>
+  <name>Hurricane Emily</name>
+  <open>1</open>
+  <Folder>
+    <name>Global Infrared Satellite Images</name>
+    <GroundOverlay>
+      <name>West Atlantic Infrared Satellite</name>
+      <LookAt id="khLookAt544">
+        <longitude>-64.88058567047116</longitude>
+        <latitude>24.99276900291444</latitude>
+        <range>7531222.235512178</range>
+        <tilt>0</tilt>
+        <heading>-1.132614248157357e-015</heading>
+      </LookAt>
+      <Icon>
+        <href>http://cimss.ssec.wisc.edu/tropic/real-time/atlantic/images/xxirg8n.GIF</href>
+        <refreshInverval>7204</refreshInverval>
+      </Icon>
+      <LatLonBox id="khLatLonBox546">
+        <north>54.87130762885401</north>
+        <south>-4.885772098882886</south>
+        <east>-29.0054127433266</east>
+        <west>-100.7557573398083</west>
+      </LatLonBox>
+    </GroundOverlay>
+    <GroundOverlay id="khGroundOverlay540">
+      <name>Northeast Pacific Infrared Satellite</name>
+      <LookAt>
+        <longitude>-125.0338859558105</longitude>
+        <latitude>24.99180221557618</latitude>
+        <range>7501122.997881487</range>
+        <tilt>0</tilt>
+        <heading>-2.907801838649126e-015</heading>
+      </LookAt>
+      <Icon>
+        <href>http://cimss.ssec.wisc.edu/tropic/real-time/eastpac/images/xxirg9n.GIF</href>
+        <refreshMode>onInterval</refreshMode>
+        <refreshInverval>7204</refreshInverval>
+      </Icon>
+      <LatLonBox id="khLatLonBox575">
+        <north>54.73595636076204</north>
+        <south>-4.75235343607811</south>
+        <east>-89.11495854937233</east>
+        <west>-160.9528232757453</west>
+      </LatLonBox>
+    </GroundOverlay>
+    <GroundOverlay>
+      <name>East Atlantic Infrared Satellite</name>
+      <LookAt id="khLookAt540">
+        <longitude>-0.05245018004265114</longitude>
+        <latitude>24.95220232178405</latitude>
+        <range>7471842.350984696</range>
+        <tilt>1.284691200898546e-014</tilt>
+        <heading>-2.935872005925346e-015</heading>
+      </LookAt>
+      <Icon>
+        <href>http://cimss.ssec.wisc.edu/tropic/real-time/europe/images/xxirmet7n.GIF</href>
+        <refreshInverval>7204</refreshInverval>
+      </Icon>
+      <LatLonBox id="khLatLonBox542">
+        <north>54.5658408466675</north>
+        <south>-4.66143464115276</south>
+        <east>35.90393605574133</east>
+        <west>-36.00883571512112</west>
+      </LatLonBox>
+    </GroundOverlay>
+  </Folder>
+  <Placemark>
+    <name>Hurricane Emily Track</name>
+    <styleUrl>root://styles#default</styleUrl>
+    <Style>
+      <LineStyle>
+        <color>ff00ffaa</color>
+        <width>3</width>
+      </LineStyle>
+    </Style>
+    <LineString>
+      <tessellate>1</tessellate>
+      <coordinates>
+-42.9,10.8,0 -43.6,10.8,0 -44.7,10.3,0 -46.00000000000001,10.6,0 -47,11.3,0 -48.6,11.4,0 -51.3,11,0 -52.8,11.1,0 -54.70000000000001,10.7,0 -56.3,11.1,0 -58.1,11.2,0 -59.8,11.4,0 -61.10000000000001,11.9,0 -62.3,12.3,0 -64,12.7,0 -65.90000000000001,13.3,0 -67.5,13.6,0 -69.2,13.9,0 -70.90000000000001,14.4,0 -72.8,14.7,0 -74.2,15.1,0 -75.8,15.6,0 -77.3,16.2,0 -78.8,16.8,0 -80.3,17.5,0 -82,18,0 -83.59999999999999,18.6,0 -85.2,19.4,0 -86.5,19.9,0 -88,20.6,0 -89.59999999999999,21.8,0 -91,22.3,0 -92.09999999999999,22.9,0 -93.50000000000001,23.5,0 -94.5,23.9,0 -95.59999999999999,24.3,0 -96,24.5,0 -96.40000000000001,24.5,0 -97.2,24.7,0 
+      </coordinates>
+    </LineString>
+  </Placemark>
+  <Folder>
+    <description>Hurricane Levels</description>
+    <name>Hurricane Info</name>
+    <Placemark>
+      <description><![CDATA[Wind - 90<br>
+Pres - 992<br>
+Cat  1 - Hurricane<br>
+<a href="http://www.wunderground.com/tropical/tracking/at200505.html">Weather Underground</a>]]></description>
+      <name>03 GMT 07/14/05</name>
+      <Style>
+        <IconStyle>
+          <Icon>
+            <href>root://icons/palette-3.png</href>
+            <y>192</y>
+            <w>32</w>
+            <h>32</h>
+          </Icon>
+        </IconStyle>
+      </Style>
+      <Point>
+        <coordinates>-61.10000000000001,11.9,0</coordinates>
+      </Point>
+    </Placemark>
+    <Placemark>
+      <description><![CDATA[Wind - 90<br>
+Pres - 991<br>
+Cat  1 - Hurricane<br>
+<a href="http://www.wunderground.com/tropical/tracking/at200505.html">Weather Underground</a>]]></description>
+      <name>09 GMT 07/14/05</name>
+      <Style>
+        <IconStyle>
+          <Icon>
+            <href>root://icons/palette-3.png</href>
+            <y>192</y>
+            <w>32</w>
+            <h>32</h>
+          </Icon>
+        </IconStyle>
+      </Style>
+      <Point>
+        <coordinates>-62.3,12.3,0</coordinates>
+      </Point>
+    </Placemark>
+    <Placemark>
+      <description><![CDATA[Wind - 100<br>
+Pres - 968<br>
+Cat  - Category 2 Hurricane<br>
+<a href="http://www.wunderground.com/tropical/tracking/at200505.html">Weather Underground</a>]]></description>
+      <name>15 GMT 07/14/05</name>
+      <Style>
+        <IconStyle>
+          <Icon>
+            <href>root://icons/palette-3.png</href>
+            <x>32</x>
+            <y>192</y>
+            <w>32</w>
+            <h>32</h>
+          </Icon>
+        </IconStyle>
+      </Style>
+      <Point>
+        <coordinates>-64,12.7,0</coordinates>
+      </Point>
+    </Placemark>
+    <Placemark>
+      <description><![CDATA[Wind - 115<br>
+Pres - 968<br>
+Cat  - Category 3 Hurricane<br>
+<a href="http://www.wunderground.com/tropical/tracking/at200505.html">Weather Underground</a>]]></description>
+      <name>21 GMT 07/14/05</name>
+      <Style>
+        <IconStyle>
+          <Icon>
+            <href>root://icons/palette-3.png</href>
+            <x>64</x>
+            <y>192</y>
+            <w>32</w>
+            <h>32</h>
+          </Icon>
+        </IconStyle>
+      </Style>
+      <Point>
+        <coordinates>-65.90000000000001,13.3,0</coordinates>
+      </Point>
+    </Placemark>
+    <Placemark>
+      <description><![CDATA[Wind - 125<br>
+Pres - 957<br>
+Cat  - Category 3 Hurricane<br>
+<a href="http://www.wunderground.com/tropical/tracking/at200505.html">Weather Underground</a>]]></description>
+      <name>03 GMT 07/15/05</name>
+      <Style>
+        <IconStyle>
+          <Icon>
+            <href>root://icons/palette-3.png</href>
+            <x>64</x>
+            <y>192</y>
+            <w>32</w>
+            <h>32</h>
+          </Icon>
+        </IconStyle>
+      </Style>
+      <Point>
+        <coordinates>-67.5,13.6,0</coordinates>
+      </Point>
+    </Placemark>
+    <Placemark>
+      <description><![CDATA[Wind - 135<br>
+Pres - 952<br>
+Cat  - Category 4 Hurricane<br>
+<a href="http://www.wunderground.com/tropical/tracking/at200505.html">Weather Underground</a>]]></description>
+      <name>09 GMT 07/15/05</name>
+      <Style>
+        <IconStyle>
+          <Icon>
+            <href>root://icons/palette-3.png</href>
+            <x>96</x>
+            <y>192</y>
+            <w>32</w>
+            <h>32</h>
+          </Icon>
+        </IconStyle>
+      </Style>
+      <Point>
+        <coordinates>-69.2,13.9,0</coordinates>
+      </Point>
+    </Placemark>
+    <Placemark>
+      <description><![CDATA[Wind - 125<br>
+Pres - 968<br>
+Cat  - Category 3 Hurricane<br>
+<a href="http://www.wunderground.com/tropical/tracking/at200505.html">Weather Underground</a>]]></description>
+      <name>15 GMT 07/15/05</name>
+      <Style>
+        <IconStyle>
+          <Icon>
+            <href>root://icons/palette-3.png</href>
+            <x>64</x>
+            <y>192</y>
+            <w>32</w>
+            <h>32</h>
+          </Icon>
+        </IconStyle>
+      </Style>
+      <Point>
+        <coordinates>-70.90000000000001,14.4,0</coordinates>
+      </Point>
+    </Placemark>
+    <Placemark>
+      <description><![CDATA[Wind - 105<br>
+Pres - 969<br>
+Cat  - Category 2 Hurricane<br>
+<a href="http://www.wunderground.com/tropical/tracking/at200505.html">Weather Underground</a>]]></description>
+      <name>21 GMT 07/15/05</name>
+      <Style>
+        <IconStyle>
+          <Icon>
+            <href>root://icons/palette-3.png</href>
+            <x>32</x>
+            <y>192</y>
+            <w>32</w>
+            <h>32</h>
+          </Icon>
+        </IconStyle>
+      </Style>
+      <Point>
+        <coordinates>-72.8,14.7,0</coordinates>
+      </Point>
+    </Placemark>
+    <Placemark>
+      <description><![CDATA[Wind - 135<br>
+Pres - 954<br>
+Cat  - Category 4 Hurricane<br>
+<a href="http://www.wunderground.com/tropical/tracking/at200505.html">Weather Underground</a>]]></description>
+      <name>03 GMT 07/16/05</name>
+      <Style>
+        <IconStyle>
+          <Icon>
+            <href>root://icons/palette-3.png</href>
+            <x>96</x>
+            <y>192</y>
+            <w>32</w>
+            <h>32</h>
+          </Icon>
+        </IconStyle>
+      </Style>
+      <Point>
+        <coordinates>-74.2,15.1,0</coordinates>
+      </Point>
+    </Placemark>
+    <Placemark>
+      <description><![CDATA[Wind - 140<br>
+Pres - 950<br>
+Cat  - Category 4 Hurricane<br>
+<a href="http://www.wunderground.com/tropical/tracking/at200505.html">Weather Underground</a>]]></description>
+      <name>09 GMT 07/16/05</name>
+      <Style>
+        <IconStyle>
+          <Icon>
+            <href>root://icons/palette-3.png</href>
+            <x>96</x>
+            <y>192</y>
+            <w>32</w>
+            <h>32</h>
+          </Icon>
+        </IconStyle>
+      </Style>
+      <Point>
+        <coordinates>-75.8,15.6,0</coordinates>
+      </Point>
+    </Placemark>
+    <Placemark>
+      <description><![CDATA[Wind - 145<br>
+Pres - 943<br>
+Cat  - Category 4 Hurricane<br>
+<a href="http://www.wunderground.com/tropical/tracking/at200505.html">Weather Underground</a>]]></description>
+      <name>15 GMT 07/16/05</name>
+      <Style>
+        <IconStyle>
+          <Icon>
+            <href>root://icons/palette-3.png</href>
+            <x>96</x>
+            <y>192</y>
+            <w>32</w>
+            <h>32</h>
+          </Icon>
+        </IconStyle>
+      </Style>
+      <Point>
+        <coordinates>-77.3,16.2,0</coordinates>
+      </Point>
+    </Placemark>
+    <Placemark>
+      <description><![CDATA[Wind - 155<br>
+Pres - 937<br>
+Cat  - Category 4 Hurricane<br>
+<a href="http://www.wunderground.com/tropical/tracking/at200505.html">Weather Underground</a>]]></description>
+      <name>21 GMT 07/16/05</name>
+      <Style>
+        <IconStyle>
+          <Icon>
+            <href>root://icons/palette-3.png</href>
+            <x>96</x>
+            <y>192</y>
+            <w>32</w>
+            <h>32</h>
+          </Icon>
+        </IconStyle>
+      </Style>
+      <Point>
+        <coordinates>-78.8,16.8,0</coordinates>
+      </Point>
+    </Placemark>
+    <Placemark>
+      <description><![CDATA[Wind - 155<br>
+Pres - 930<br>
+Cat  - Category 4 Hurricane<br>
+<a href="http://www.wunderground.com/tropical/tracking/at200505.html">Weather Underground</a>]]></description>
+      <name>03 GMT 07/17/05</name>
+      <Style>
+        <IconStyle>
+          <Icon>
+            <href>root://icons/palette-3.png</href>
+            <x>96</x>
+            <y>192</y>
+            <w>32</w>
+            <h>32</h>
+          </Icon>
+        </IconStyle>
+      </Style>
+      <Point>
+        <coordinates>-80.3,17.5,0</coordinates>
+      </Point>
+    </Placemark>
+    <Placemark>
+      <description><![CDATA[Wind - 150<br>
+Pres - 938<br>
+Cat  - Category 4 Hurricane<br>
+<a href="http://www.wunderground.com/tropical/tracking/at200505.html">Weather Underground</a>]]></description>
+      <name>09 GMT 07/17/05</name>
+      <Style>
+        <IconStyle>
+          <Icon>
+            <href>root://icons/palette-3.png</href>
+            <x>96</x>
+            <y>192</y>
+            <w>32</w>
+            <h>32</h>
+          </Icon>
+        </IconStyle>
+      </Style>
+      <Point>
+        <coordinates>-82,18,0</coordinates>
+      </Point>
+    </Placemark>
+    <Placemark>
+      <description><![CDATA[Wind - 150<br>
+Pres - 946<br>
+Cat  - Category 4 Hurricane<br>
+<a href="http://www.wunderground.com/tropical/tracking/at200505.html">Weather Underground</a>]]></description>
+      <name>15 GMT 07/17/05</name>
+      <Style>
+        <IconStyle>
+          <Icon>
+            <href>root://icons/palette-3.png</href>
+            <x>96</x>
+            <y>192</y>
+            <w>32</w>
+            <h>32</h>
+          </Icon>
+        </IconStyle>
+      </Style>
+      <Point>
+        <coordinates>-83.59999999999999,18.6,0</coordinates>
+      </Point>
+    </Placemark>
+    <Placemark>
+      <description><![CDATA[Wind - 145<br>
+Pres - 948<br>
+Cat  - Category 4 Hurricane<br>
+<a href="http://www.wunderground.com/tropical/tracking/at200505.html">Weather Underground</a>]]></description>
+      <name>21 GMT 07/17/05</name>
+      <Style>
+        <IconStyle>
+          <Icon>
+            <href>root://icons/palette-3.png</href>
+            <x>96</x>
+            <y>192</y>
+            <w>32</w>
+            <h>32</h>
+          </Icon>
+        </IconStyle>
+      </Style>
+      <Point>
+        <coordinates>-85.2,19.4,0</coordinates>
+      </Point>
+    </Placemark>
+    <Placemark>
+      <description><![CDATA[Wind - 135<br>
+Pres - 955<br>
+Cat  - Category 4 Hurricane<br>
+<a href="http://www.wunderground.com/tropical/tracking/at200505.html">Weather Underground</a>]]></description>
+      <name>03 GMT 07/18/05</name>
+      <Style>
+        <IconStyle>
+          <Icon>
+            <href>root://icons/palette-3.png</href>
+            <x>96</x>
+            <y>192</y>
+            <w>32</w>
+            <h>32</h>
+          </Icon>
+        </IconStyle>
+      </Style>
+      <Point>
+        <coordinates>-86.5,19.9,0</coordinates>
+      </Point>
+    </Placemark>
+    <Placemark>
+      <description><![CDATA[Wind - 110<br>
+Pres - 962<br>
+Cat  - Category 2 Hurricane<br>
+<a href="http://www.wunderground.com/tropical/tracking/at200505.html">Weather Underground</a>]]></description>
+      <name>09 GMT 07/18/05</name>
+      <Style>
+        <IconStyle>
+          <Icon>
+            <href>root://icons/palette-3.png</href>
+            <x>32</x>
+            <y>192</y>
+            <w>32</w>
+            <h>32</h>
+          </Icon>
+        </IconStyle>
+      </Style>
+      <Point>
+        <coordinates>-88,20.6,0</coordinates>
+      </Point>
+    </Placemark>
+    <Placemark>
+      <description><![CDATA[Wind - 100<br>
+Pres - 975<br>
+Cat  - Category 2 Hurricane<br>
+<a href="http://www.wunderground.com/tropical/tracking/at200505.html">Weather Underground</a>]]></description>
+      <name>15 GMT 07/18/05</name>
+      <Style>
+        <IconStyle>
+          <Icon>
+            <href>root://icons/palette-3.png</href>
+            <x>32</x>
+            <y>192</y>
+            <w>32</w>
+            <h>32</h>
+          </Icon>
+        </IconStyle>
+      </Style>
+      <Point>
+        <coordinates>-89.59999999999999,21.8,0</coordinates>
+      </Point>
+    </Placemark>
+    <Placemark>
+      <description><![CDATA[Wind - 75<br>
+Pres - 983<br>
+Cat  - Category 1 Hurricane<br>
+<a href="http://www.wunderground.com/tropical/tracking/at200505.html">Weather Underground</a>]]></description>
+      <name>21 GMT 07/18/05</name>
+      <Style>
+        <IconStyle>
+          <Icon>
+            <href>root://icons/palette-3.png</href>
+            <y>192</y>
+            <w>32</w>
+            <h>32</h>
+          </Icon>
+        </IconStyle>
+      </Style>
+      <Point>
+        <coordinates>-91,22.3,0</coordinates>
+      </Point>
+    </Placemark>
+    <Placemark>
+      <description><![CDATA[Wind - 90<br>
+Pres - 983<br>
+Cat  - Category 1 Hurricane<br>
+<a href="http://www.wunderground.com/tropical/tracking/at200505.html">Weather Underground</a>]]></description>
+      <name>03 GMT 07/19/05</name>
+      <Style>
+        <IconStyle>
+          <Icon>
+            <href>root://icons/palette-3.png</href>
+            <y>192</y>
+            <w>32</w>
+            <h>32</h>
+          </Icon>
+        </IconStyle>
+      </Style>
+      <Point>
+        <coordinates>-92.09999999999999,22.9,0</coordinates>
+      </Point>
+    </Placemark>
+    <Placemark>
+      <description><![CDATA[Wind - 90<br>
+Pres - 980<br>
+Cat  - Category 1 Hurricane<br>
+<a href="http://www.wunderground.com/tropical/tracking/at200505.html">Weather Underground</a>]]></description>
+      <name>09 GMT 07/19/05</name>
+      <Style>
+        <IconStyle>
+          <Icon>
+            <href>root://icons/palette-3.png</href>
+            <y>192</y>
+            <w>32</w>
+            <h>32</h>
+          </Icon>
+        </IconStyle>
+      </Style>
+      <Point>
+        <coordinates>-93.50000000000001,23.5,0</coordinates>
+      </Point>
+    </Placemark>
+    <Placemark>
+      <description><![CDATA[Wind - 90<br>
+Pres - 972<br>
+Cat  - Category 1 Hurricane<br>
+<a href="http://www.wunderground.com/tropical/tracking/at200505.html">Weather Underground</a>]]></description>
+      <name>15 GMT 07/19/05</name>
+      <Style>
+        <IconStyle>
+          <Icon>
+            <href>root://icons/palette-3.png</href>
+            <y>192</y>
+            <w>32</w>
+            <h>32</h>
+          </Icon>
+        </IconStyle>
+      </Style>
+      <Point>
+        <coordinates>-94.5,23.9,0</coordinates>
+      </Point>
+    </Placemark>
+    <Placemark>
+      <description><![CDATA[Wind - 100<br>
+Pres - 956<br>
+Cat  - Category 2 Hurricane<br>
+<a href="http://www.wunderground.com/tropical/tracking/at200505.html">Weather Underground</a>]]></description>
+      <name>21 GMT 07/19/05</name>
+      <Style>
+        <IconStyle>
+          <Icon>
+            <href>root://icons/palette-3.png</href>
+            <x>32</x>
+            <y>192</y>
+            <w>32</w>
+            <h>32</h>
+          </Icon>
+        </IconStyle>
+      </Style>
+      <Point>
+        <coordinates>-95.59999999999999,24.3,0</coordinates>
+      </Point>
+    </Placemark>
+    <Placemark>
+      <description><![CDATA[Wind - 125<br>
+Pres - 945<br>
+Cat  - Category 3 Hurricane<br>
+<a href="http://www.wunderground.com/tropical/tracking/at200505.html">Weather Underground</a>]]></description>
+      <name>23 GMT 07/19/05</name>
+      <Style>
+        <IconStyle>
+          <Icon>
+            <href>root://icons/palette-3.png</href>
+            <x>64</x>
+            <y>192</y>
+            <w>32</w>
+            <h>32</h>
+          </Icon>
+        </IconStyle>
+      </Style>
+      <Point>
+        <coordinates>-96,24.5,0</coordinates>
+      </Point>
+    </Placemark>
+    <Placemark>
+      <description><![CDATA[Wind - 125<br>
+Pres - 944<br>
+Cat  - Category 3 Hurricane<br>
+<a href="http://www.wunderground.com/tropical/tracking/at200505.html">Weather Underground</a>]]></description>
+      <name>03 GMT 07/20/05</name>
+      <Style>
+        <IconStyle>
+          <Icon>
+            <href>root://icons/palette-3.png</href>
+            <x>64</x>
+            <y>192</y>
+            <w>32</w>
+            <h>32</h>
+          </Icon>
+        </IconStyle>
+      </Style>
+      <Point>
+        <coordinates>-96.40000000000001,24.5,0</coordinates>
+      </Point>
+    </Placemark>
+    <Placemark>
+      <description><![CDATA[Wind - 125<br>
+Pres - 943<br>
+Cat  - Category 3 Hurricane<br>
+<a href="http://www.wunderground.com/tropical/tracking/at200505.html">Weather Underground</a>]]></description>
+      <name>09 GMT 07/20/05</name>
+      <Style>
+        <IconStyle>
+          <Icon>
+            <href>root://icons/palette-3.png</href>
+            <x>64</x>
+            <y>192</y>
+            <w>32</w>
+            <h>32</h>
+          </Icon>
+        </IconStyle>
+      </Style>
+      <Point>
+        <coordinates>-97.2,24.7,0</coordinates>
+      </Point>
+    </Placemark>
+  </Folder>
+  <Folder>
+    <description>Hurricane Alley posted by milocs at bbs.keyhole.com</description>
+    <name>Hurricane Alley</name>
+    <visibility>0</visibility>
+    <GroundOverlay>
+      <name>hurricane alley west us</name>
+      <visibility>0</visibility>
+      <Icon>
+        <href>http://sirocco.accuweather.com/sat_mosaic_640x480_public/VR/isVRwest.jpg</href>
+        <refreshMode>onInterval</refreshMode>
+        <refreshInverval>1804</refreshInverval>
+      </Icon>
+      <LatLonBox id="khLatLonBox573">
+        <north>47.64355217202393</north>
+        <south>24.12295116155123</south>
+        <east>-85.22984492167299</east>
+        <west>-113.8847259042207</west>
+      </LatLonBox>
+    </GroundOverlay>
+    <GroundOverlay>
+      <name>hurricane alley us</name>
+      <visibility>0</visibility>
+      <Icon>
+        <href>http://sirocco.accuweather.com/sat_mosaic_640x480_public/VR/isVReast.jpg</href>
+        <refreshMode>onInterval</refreshMode>
+        <refreshInverval>1800</refreshInverval>
+      </Icon>
+      <LatLonBox id="khLatLonBox542">
+        <north>47.47567907260731</north>
+        <south>22.58650900803959</south>
+        <east>-67.12313753299434</east>
+        <west>-96.39398217582411</west>
+      </LatLonBox>
+    </GroundOverlay>
+    <GroundOverlay>
+      <name>hurricane alley 2</name>
+      <visibility>0</visibility>
+      <Icon>
+        <href>http://sirocco.accuweather.com/sat_mosaic_640x480_public/VR/isVRatl1.jpg</href>
+        <refreshMode>onInterval</refreshMode>
+        <refreshInverval>1800</refreshInverval>
+      </Icon>
+      <LatLonBox id="khLatLonBox558">
+        <north>28.05041371085019</north>
+        <south>9.662233606512315</south>
+        <east>-37.61812282556893</east>
+        <west>-62.16023806151491</west>
+        <rotation>-2.593910332605852</rotation>
+      </LatLonBox>
+    </GroundOverlay>
+    <GroundOverlay>
+      <name>hurricane alley 1</name>
+      <visibility>0</visibility>
+      <Icon>
+        <href>http://sirocco.accuweather.com/sat_mosaic_640x480_public/VR/isVRcuba.jpg</href>
+        <refreshMode>onInterval</refreshMode>
+        <refreshInverval>1801</refreshInverval>
+      </Icon>
+      <LatLonBox id="khLatLonBox548">
+        <north>28.91241083905922</north>
+        <south>10.08187128054424</south>
+        <east>-62.49452445636292</east>
+        <west>-87.01849042800626</west>
+        <rotation>0.1130379232164185</rotation>
+      </LatLonBox>
+    </GroundOverlay>
+    <GroundOverlay>
+      <name>hurricane alley gulf</name>
+      <visibility>0</visibility>
+      <Icon>
+        <href>http://sirocco.accuweather.com/sat_mosaic_640x480_public/VR/isVRgul.jpg</href>
+        <refreshMode>onInterval</refreshMode>
+        <refreshInverval>1804</refreshInverval>
+      </Icon>
+      <LatLonBox id="khLatLonBox564">
+        <north>31.37306173872538</north>
+        <south>11.7884370049689</south>
+        <east>-73.71302391008211</east>
+        <west>-99.05640867018587</west>
+      </LatLonBox>
+    </GroundOverlay>
+  </Folder>
+</Document>
+</kml>
