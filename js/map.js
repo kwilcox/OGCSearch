@@ -409,8 +409,10 @@ Ext.onReady(function() {
               t0.setTime((secFirst*1000+secLast*1000)/2);
               timeFactor = (secLast - secFirst) / 3600 / sliderSpan;
               middleTime.setText(t0.add(Date.HOUR,0).format('m-d')+' '+t0.add(Date.HOUR,0).format('H')+'Z');
-              firstTime.setText(t0.add(Date.HOUR,timeSlider.minValue).format('m-d')+' '+t0.add(Date.HOUR,timeSlider.minValue).format('H')+'Z');
-              lastTime.setText(t0.add(Date.HOUR,timeSlider.maxValue).format('m-d')+' '+t0.add(Date.HOUR,timeSlider.maxValue).format('H')+'Z');
+              firstTime.setText(t0.add(Date.HOUR,timeSlider.minValue * timeFactor).format('m-d')+' '+t0.add(Date.HOUR,timeSlider.minValue * timeFactor).format('H')+'Z');
+              lastTime.setText(t0.add(Date.HOUR,timeSlider.maxValue * timeFactor).format('m-d')+' '+t0.add(Date.HOUR,timeSlider.maxValue * timeFactor).format('H')+'Z');
+              applyTime(t0.add(Date.HOUR,timeSlider.minValue * timeFactor).format('Y-m-d')+'T'+t0.add(Date.HOUR,timeSlider.minValue * timeFactor).format('H')+':00');
+              currentTime.setText('Map time : ' + t0.add(Date.HOUR,timeSlider.minValue * timeFactor).format('Y-m-d')+' '+t0.add(Date.HOUR,timeSlider.minValue * timeFactor).format('H')+'Z');
               timeSlider.setValue(timeSlider.minValue);
               winDateRange.hide();
             }
@@ -942,7 +944,7 @@ Ext.onReady(function() {
   winAbout.show();
 
   // populate sample layers
-  populateSampleLayers();
+//  populateSampleLayers();
 
   // apply t0
   applyTime(t0);
