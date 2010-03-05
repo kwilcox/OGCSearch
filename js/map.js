@@ -10,11 +10,6 @@ var maxBBOX = new Array();
 var prevProjection;
 var prevZoom = new Array();
 var timeSlider,timePanel;
-var timeMin = -24 * 2;
-var timeMax = 24 * 2;
-var timeIncr = 3;
-var timeIncrFactor = 1;
-var timeSteps = 32;
 var t0 = new Date();
 t0 = t0.clearTime();
 var animatedTimer;
@@ -23,6 +18,9 @@ var animSpeed = 2500;
 var dp0,dp1;
 var animPause,animPlay;
 var firstTime,lastTime,middleTime,currentTime;
+var timeFactor = 1;
+var sliderSpan = 48;
+var sliderIncr = 3;
 
 // Earth
 var GoogleEarthPanel;
@@ -43,7 +41,7 @@ function stopSlides() {
 
 function nextMap() {
   val = timeSlider.getValue();
-  val += timeIncr * timeIncrFactor;
+  val += sliderIncr;
   if (val > timeSlider.maxValue) {
     val = timeSlider.minValue;
   }
@@ -409,9 +407,7 @@ Ext.onReady(function() {
               var secFirst = dp0.getValue().format('U');
               var secLast  = dp1.getValue().format('U');
               t0.setTime((secFirst*1000+secLast*1000)/2);
-              timeIncrFactor = (secLast - secFirst) / 3600 / timeSteps / timeIncr;
-              timeSlider.setMinValue(-1 * (secLast - secFirst) / 3600 / 2);
-              timeSlider.setMaxValue((secLast - secFirst) / 3600 / 2);
+              timeFactor = (secLast - secFirst) / 3600 / sliderSpanHours;
               middleTime.setText(t0.add(Date.HOUR,0).format('m-d')+' '+t0.add(Date.HOUR,0).format('H')+'Z');
               firstTime.setText(t0.add(Date.HOUR,timeSlider.minValue).format('m-d')+' '+t0.add(Date.HOUR,timeSlider.minValue).format('H')+'Z');
               lastTime.setText(t0.add(Date.HOUR,timeSlider.maxValue).format('m-d')+' '+t0.add(Date.HOUR,timeSlider.maxValue).format('H')+'Z');
@@ -780,14 +776,14 @@ Ext.onReady(function() {
 
   timeSlider = new Ext.Slider({
      value     : 0
-    ,increment : timeIncr
-    ,minValue  : timeMin
-    ,maxValue  : timeMax
+    ,increment : sliderIncr
+    ,minValue  : sliderSpan / -2
+    ,maxValue  : sliderSpan / 2
     ,id        : 'timeSlider'
     ,listeners : {
       change : function(slider,newValue) {
-        applyTime(t0.add(Date.HOUR,newValue).format('Y-m-d')+'T'+t0.add(Date.HOUR,newValue).format('H')+':00Z');
-        currentTime.setText('Map time : ' + t0.add(Date.HOUR,newValue).format('Y-m-d')+' '+t0.add(Date.HOUR,newValue).format('H')+'Z');
+        applyTime(t0.add(Date.HOUR,newValue * timeFactor).format('Y-m-d')+'T'+t0.add(Date.HOUR,newValue * timeFactor).format('H')+':00Z');
+        currentTime.setText('Map time : ' + t0.add(Date.HOUR,newValue * timeFactor).format('Y-m-d')+' '+t0.add(Date.HOUR,newValue * timeFactor).format('H')+'Z');
       }
     }
     ,colspan   : 3
@@ -797,22 +793,22 @@ Ext.onReady(function() {
 
   firstTime = new Ext.form.Label({
      id   : 'firstTime'
-    ,text : t0.add(Date.HOUR,timeSlider.minValue).format('m-d')+' '+t0.add(Date.HOUR,timeSlider.minValue).format('H')+'Z'
+    ,text : t0.add(Date.HOUR,timeSlider.minValue * timeFactor).format('m-d')+' '+t0.add(Date.HOUR,timeSlider.minValue * timeFactor).format('H')+'Z'
     ,cellCls : 'firstTime'
   });
   middleTime = new Ext.form.Label({
      id   : 'middleTime'
-    ,text : t0.add(Date.HOUR,0).format('m-d')+' '+t0.add(Date.HOUR,0).format('H')+'Z'
+    ,text : t0.format('m-d')+' '+t0.format('H')+'Z'
     ,cellCls : 'middleTime'
   });
   lastTime = new Ext.form.Label({
      id   : 'lastTime'
-    ,text : t0.add(Date.HOUR,timeSlider.maxValue).format('m-d')+' '+t0.add(Date.HOUR,timeSlider.maxValue).format('H')+'Z'
+    ,text : t0.add(Date.HOUR,timeSlider.maxValue * timeFactor).format('m-d')+' '+t0.add(Date.HOUR,timeSlider.maxValue * timeFactor).format('H')+'Z'
     ,cellCls : 'lastTime'
   });
   currentTime = new Ext.form.Label({
      id   : 'currentTime'
-    ,text : 'Map time : ' + t0.add(Date.HOUR,0).format('Y-m-d')+' '+t0.add(Date.HOUR,0).format('H')+'Z'
+    ,text : 'Map time : ' + t0.format('Y-m-d')+' '+t0.format('H')+'Z'
     ,cellCls : 'middleTime'
     ,colspan : 3
   });
