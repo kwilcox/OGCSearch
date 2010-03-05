@@ -875,7 +875,7 @@ Ext.onReady(function() {
      renderTo     : Ext.getBody()
     ,id           : 'timePanel'
     ,layout       : 'table'
-    ,items        : [animPlay,animPause,firstTime,middleTime,lastTime,sliderCalendar,timeSlider,currentTime]
+    ,items        : [animPlay,animPause,sliderCalendar,firstTime,middleTime,lastTime,timeSlider,currentTime]
     ,layoutConfig : {
       columns : 6
     }
