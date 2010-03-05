@@ -944,7 +944,7 @@ Ext.onReady(function() {
   winAbout.show();
 
   // populate sample layers
-//  populateSampleLayers();
+  populateSampleLayers();
 
   // apply t0
   applyTime(t0);
