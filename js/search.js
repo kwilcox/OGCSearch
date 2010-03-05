@@ -28,7 +28,7 @@ function decode(str) {
 function listHits(id) {
   document.getElementById('gcLink'+id).href = 'javascript:function foo() {return false;}';
   document.getElementById('gcImg'+id).src = down0.src;
-  var div = document.getElementById("googHit"+id);
+  var div = document.getElementById("gcLink"+id).parentNode;
   ol = document.createElement('ol');
   for (var i = 0; i < hitsArr[id].length; i++) {
     li = document.createElement('li');
