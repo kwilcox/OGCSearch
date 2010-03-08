@@ -24,7 +24,7 @@ var sliderIncr = 3;
 
 // Earth
 var GoogleEarthPanel;
-google.load("earth", "1");
+google.load("earth", "1.x");
 
 function startSlides() {
   if (animatedTimer) {
@@ -727,9 +727,9 @@ Ext.onReady(function() {
         if ((googleEarthPanelItem) && (googleEarthPanelItem.ge != null)) {
           if (node.layer.CLASS_NAME == "OpenLayers.Layer.GML") {
             if (checked) {
-              googleEarthPanelItem.addKmlLayer(node.layer.name, node.layer.url);
+              googleEarthPanelItem.addNetworkLink(node.layer.name, node.layer.url);
             } else {
-              googleEarthPanelItem.removeKmlLayer(node.layer.name);
+              googleEarthPanelItem.removeNetworkLink(node.layer.name);
             }
           }
         }

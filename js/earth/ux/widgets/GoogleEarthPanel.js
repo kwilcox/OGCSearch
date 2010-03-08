@@ -187,10 +187,8 @@ GeoExt.ux.GoogleEarthPanel = Ext.extend(Ext.Panel, {
      */
     layers: null,
     
-    // Array of kmlLayers on the map.
-    kmlLayers: new Array(),
-    // Currently loading KML.
-    kmlName: null,
+    /* Array of networkLinks on the map... so we can remove them. */
+    networkLinks: new Array(),
 
     /** private: property[layerCache]
      *  Layer cache for Google Earth PlugIn
@@ -354,36 +352,22 @@ GeoExt.ux.GoogleEarthPanel = Ext.extend(Ext.Panel, {
     /** method[addNetwokLink]
      *  Add a network link to the google earth panel
      */
-    addNetwokLink: function(url) {
+    addNetworkLink: function(name, url) {
+      if (this.ge) {
         var link = this.ge.createLink('');
         link.setHref(url);
 
         var networkLink = this.ge.createNetworkLink('');
         networkLink.set(link, true, false); // Sets the link, refreshVisibility, and flyToView
+        this.networkLinks[name] = networkLink;
         this.ge.getFeatures().appendChild(networkLink);
-    },
-    
-    addKmlLayer: function(name, url) {
-      this.kmlName = name;
-      if (google.earth) {
-        if (url != null) {
-          google.earth.fetchKml(this.ge, url, this.processKml);
-        }
       }
     },
     
-    processKml: function(obj) {
-      if (obj != null) {
-        this.ge.getFeatures().appendChild(obj);
-        this.kmlLayers[this.kmlName] = obj;
-        this.kmlName = null;
-      }
-    },
-    
-    removeKmlLayer: function(name) {
+    removeNetworkLink: function(name) {
       if (this.ge) {
-        if (this.kmlLayers[name]) {
-          this.ge.getFeatures().removeChild(this.kmlLayers[name]);
+        if (this.networkLinks[name]) {
+          this.ge.getFeatures().removeChild(this.networkLinks[name]);
         }
       }
     },
