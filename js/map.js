@@ -721,6 +721,20 @@ Ext.onReady(function() {
     })
     ,tbar         : [actions["addCustomURL"],'->',actions["findOnMap"]]
     ,border       : false
+    ,listeners: {
+      "checkchange": function(node, checked) {
+        var googleEarthPanelItem = Ext.getCmp("googleEarthPanelItem");
+        if ((googleEarthPanelItem) && (googleEarthPanelItem.ge != null)) {
+          if (node.layer.CLASS_NAME == "OpenLayers.Layer.GML") {
+            if (checked) {
+              googleEarthPanelItem.addKmlLayer(node.layer.name, node.lay);
+            } else {
+              googleEarthPanelItem.removeKmlLayer(node.layer.name);
+            }
+          }
+        }
+      }
+    }
   });
 
   // override the dblclick behavior so that it zooms to a max extents per layer if defined

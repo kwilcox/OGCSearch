@@ -186,6 +186,9 @@ GeoExt.ux.GoogleEarthPanel = Ext.extend(Ext.Panel, {
      *  Visibility is synchronized with map visibility
      */
     layers: null,
+    
+    // Array of kmlLayers on the map.
+    kmlLayers: new Array(),
 
     /** private: property[layerCache]
      *  Layer cache for Google Earth PlugIn
@@ -357,7 +360,26 @@ GeoExt.ux.GoogleEarthPanel = Ext.extend(Ext.Panel, {
         networkLink.set(link, true, false); // Sets the link, refreshVisibility, and flyToView
         this.ge.getFeatures().appendChild(networkLink);
     },
-
+    
+    addKmlLayer: function(name, url) {
+      if (google.earth) {
+        if (url) {
+          google.earth.fetchKml(this.ge, url, function(obj) {
+            this.kmlLayers[name] = obj;
+            this.ge.getFeatures().appendChild(obj);
+          });
+        }
+      }
+    },
+    
+    removeKmlLayer: function(name) {
+      if (this.ge) {
+        if (this.kmlLayers[name]) {
+          this.ge.getFeatures().removeChild(this.kmlLayers[name]);
+        }
+      }
+    },
+    
     /** method[addLayer]
      *  Add a WMS layer supporting KML output format
      *  :param layer: ``OpenLayers.Layer.WMS`` OpenLayers WMS layer
