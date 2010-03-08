@@ -502,8 +502,8 @@ Ext.onReady(function() {
     store.load();
 
     addKMLToMap(document.location+'kml/emilyir.kml','Sample KML',false);
-//    addKMLToMap(document.location+'kml/4000_New.kml','Sample KML',false); 
-//    addKMLToMap(document.location+'kml/Base_WaterLevel_new.kml','Sample KML',false);
+    addKMLToMap(document.location+'kml/4000_New.kml','Sample KML',false); 
+    addKMLToMap(document.location+'kml/Base_WaterLevel_new.kml','Sample KML',false);
   }
 
   function findAndZoom(warn) {
