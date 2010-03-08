@@ -189,6 +189,8 @@ GeoExt.ux.GoogleEarthPanel = Ext.extend(Ext.Panel, {
     
     // Array of kmlLayers on the map.
     kmlLayers: new Array(),
+    // Currently loading KML.
+    kmlName: null,
 
     /** private: property[layerCache]
      *  Layer cache for Google Earth PlugIn
@@ -362,16 +364,22 @@ GeoExt.ux.GoogleEarthPanel = Ext.extend(Ext.Panel, {
     },
     
     addKmlLayer: function(name, url) {
+      this.kmlName = name;
       if (google.earth) {
         if (url != null) {
-          google.earth.fetchKml(this.ge, url, function(obj) {
-            this.ge.getFeatures().appendChild(obj);
-            this.kmlLayers[name] = obj;
-          });
+          google.earth.fetchKml(this.ge, url, this.processKml);
         }
       }
     },
-
+    
+    processKml: function(obj) {
+      if (obj != null) {
+        this.ge.getFeatures().appendChild(obj);
+        this.kmlLayers[this.kmlName] = obj;
+        this.kmlName = null;
+      }
+    },
+    
     removeKmlLayer: function(name) {
       if (this.ge) {
         if (this.kmlLayers[name]) {
