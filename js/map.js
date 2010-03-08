@@ -483,7 +483,7 @@ Ext.onReady(function() {
     u = 'http://24.249.210.121:8080/ncWMS/wms?SERVICE=WMS&REQUEST=GetCapabilities&VERSION=1.1.1';
     purl = proxyLoc ? proxyLoc + escape(u) : u;
     store.proxy.conn.url = purl
-    store.load();
+//    store.load();
 
     store = new GeoExt.data.WMSCapabilitiesStore({
       listeners : {
@@ -502,8 +502,8 @@ Ext.onReady(function() {
     store.load();
 
     addKMLToMap(document.location+'kml/emilyir.kml','Sample KML',false);
-    addKMLToMap(document.location+'kml/4000_New.kml','Sample KML',false); 
-    addKMLToMap(document.location+'kml/Base_WaterLevel_new.kml','Sample KML',false);
+//    addKMLToMap(document.location+'kml/4000_New.kml','Sample KML',false); 
+//    addKMLToMap(document.location+'kml/Base_WaterLevel_new.kml','Sample KML',false);
   }
 
   function findAndZoom(warn) {
