@@ -727,7 +727,7 @@ Ext.onReady(function() {
         if ((googleEarthPanelItem) && (googleEarthPanelItem.ge != null)) {
           if (node.layer.CLASS_NAME == "OpenLayers.Layer.GML") {
             if (checked) {
-              googleEarthPanelItem.addKmlLayer(node.layer.name, node.lay);
+              googleEarthPanelItem.addKmlLayer(node.layer.name, node.layer.url);
             } else {
               googleEarthPanelItem.removeKmlLayer(node.layer.name);
             }

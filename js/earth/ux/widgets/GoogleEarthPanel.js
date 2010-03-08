@@ -363,15 +363,15 @@ GeoExt.ux.GoogleEarthPanel = Ext.extend(Ext.Panel, {
     
     addKmlLayer: function(name, url) {
       if (google.earth) {
-        if (url) {
+        if (url != null) {
           google.earth.fetchKml(this.ge, url, function(obj) {
-            this.kmlLayers[name] = obj;
             this.ge.getFeatures().appendChild(obj);
+            this.kmlLayers[name] = obj;
           });
         }
       }
     },
-    
+
     removeKmlLayer: function(name) {
       if (this.ge) {
         if (this.kmlLayers[name]) {
