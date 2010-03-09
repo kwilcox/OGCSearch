@@ -504,7 +504,6 @@ Ext.onReady(function() {
 
     addKMLToMap(document.location+'kml/emilyir.kml','Sample KML',false);
     addKMLToMap(document.location+'kml/NWS_northeast_N0R_RadarLoop.kmz','Sample KML',false);
-    addKMLToMap('http://sdf.ndbc.noaa.gov/kml/get_kml.php?fmt=kml&wtmp=y','Sample KML',false);
   }
 
   function findAndZoom(warn) {
