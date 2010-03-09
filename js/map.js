@@ -503,7 +503,6 @@ Ext.onReady(function() {
     store.load();
 
     addKMLToMap(document.location+'kml/emilyir.kml','Sample KML',false);
-    addKMLToMap(document.location+'kml/NWS_northeast_N0R_RadarLoop.kmz','Sample KML',false);
   }
 
   function findAndZoom(warn) {
