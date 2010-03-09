@@ -115,16 +115,16 @@ function scanUrl(searcherID,uri) {
 }
 
 function getLayers(uri) {
-  if (uri.indexOf('.kml') >= 0) {
-    addKMLToMap(uri,'User-added KML',true);
-  }
-  else {
+  if (uri.search(/GetCapabilities/ig) > 0) {
     if (!winGetCaps.rendered || winGetCaps.hidden) {
       winGetCaps.show();
     }
     storeGetCaps.removeAll();
     storeGetCaps.proxy.conn.url = proxyLoc+escape(uri);
     storeGetCaps.load();
+  }
+  else {
+    addKMLToMap(uri,'User-added KML',true);
   }
 }
 

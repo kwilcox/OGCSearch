@@ -89,7 +89,7 @@ function addKMLToMap(u,category,visibility) {
   // get KML filename to use as layer name
   var p = u.split('/');
   var layerKML = new OpenLayers.Layer.GML(
-     p[p.length-1]
+     p[p.length-1]+' (kml)'
     ,purl
     ,{
        format        : OpenLayers.Format.KML
@@ -103,7 +103,8 @@ function addKMLToMap(u,category,visibility) {
 
   // add it to the map
   layerKML.visibility = visibility;
-  map.addLayer(layerKML);
+  // no, don't really add it to the OL map
+  // map.addLayer(layerKML);
 
   // add the layer to the list
   var layerNode = new Ext.data.Node({
@@ -502,8 +503,8 @@ Ext.onReady(function() {
     store.load();
 
     addKMLToMap(document.location+'kml/emilyir.kml','Sample KML',false);
-    addKMLToMap(document.location+'kml/4000_New.kml','Sample KML',false); 
-    addKMLToMap(document.location+'kml/Base_WaterLevel_new.kml','Sample KML',false);
+    addKMLToMap(document.location+'kml/NWS_northeast_N0R_RadarLoop.kmz','Sample KML',false);
+    addKMLToMap('http://sdf.ndbc.noaa.gov/kml/get_kml.php?fmt=kml&wtmp=y','Sample KML',false);
   }
 
   function findAndZoom(warn) {
@@ -722,7 +723,7 @@ Ext.onReady(function() {
     ,tbar         : [actions["addCustomURL"],'->',actions["findOnMap"]]
     ,border       : false
     ,listeners: {
-      "checkchange": function(node, checked) {
+      "checkchange": function(node,checked) {
         var googleEarthPanelItem = Ext.getCmp("googleEarthPanelItem");
         if ((googleEarthPanelItem) && (googleEarthPanelItem.ge != null)) {
           if (node.layer.CLASS_NAME == "OpenLayers.Layer.GML") {
@@ -731,6 +732,14 @@ Ext.onReady(function() {
             } else {
               googleEarthPanelItem.removeNetworkLink(node.layer.name);
             }
+          }
+        }
+      }
+      ,"append": function(tree,nodeParent,node,number) {
+        var googleEarthPanelItem = Ext.getCmp("googleEarthPanelItem");
+        if ((googleEarthPanelItem) && (googleEarthPanelItem.ge != null)) {
+          if (node.layer.CLASS_NAME == "OpenLayers.Layer.GML") {
+            googleEarthPanelItem.addNetworkLink(node.layer.name, node.layer.url);
           }
         }
       }
@@ -776,7 +785,7 @@ Ext.onReady(function() {
         ,handler       : function() {
           if (this.pressed) {
             GoogleEarthPanel.add(googleEarthPanelItem);
-            GoogleEarthPanel.setHeight(300);
+            GoogleEarthPanel.setHeight(400);
             GoogleEarthPanel.setVisible(true);
             GoogleEarthPanel.doLayout();
             viewport.doLayout();
@@ -805,10 +814,10 @@ Ext.onReady(function() {
      xtype     : 'gxux_googleearthpanel'
     ,id        : 'googleEarthPanelItem'
     ,map       : map
-    ,altitude  : 50
-    ,heading   : -60
-    ,tilt      : 70
-    ,range     : 700
+    ,altitude  : 9000000
+    ,heading   : 0
+    ,tilt      : 10
+    ,range     : 70000
   };
 
   timeSlider = new Ext.Slider({
@@ -975,7 +984,7 @@ Ext.onReady(function() {
 
 function applyTime(t) {
   for (var i in map.layers) {
-    if (map.layers[i].name && map.layers[i].name.indexOf('.kml') < 0 && !map.layers[i].isBaseLayer) {
+    if (map.layers[i].name && map.layers[i].name.indexOf('(kml)') < 0 && !map.layers[i].isBaseLayer) {
       map.layers[i].mergeNewParams({'time':t});
     }
   }
