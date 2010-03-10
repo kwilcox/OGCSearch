@@ -397,6 +397,7 @@ GeoExt.ux.GoogleEarthPanel = Ext.extend(Ext.Panel, {
           tempthis.kmlLayerNodes[name] = result;
           tempthis.constructNodes(result);
         }
+      }
     },
     
     constructNodes: function(objs) {
