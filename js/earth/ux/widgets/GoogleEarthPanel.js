@@ -375,6 +375,7 @@ GeoExt.ux.GoogleEarthPanel = Ext.extend(Ext.Panel, {
           this.constructNodes(this.kmlLayerNodes[name]);
         } else {
           var tempthis = this;
+          var result = Array();
           var gex = new GEarthExtensions(this.ge);
           gex.dom.walk({
             rootObject: kmlObject,
@@ -383,18 +384,19 @@ GeoExt.ux.GoogleEarthPanel = Ext.extend(Ext.Panel, {
             geometries: true,
             visitCallback: function(context) {
               // TODO: Build the array here (this gets called for each node).
-              // Store the array in tempthis.kmlLayerNodes[name].  Have to do some
-              // logical parent / children stuff here. See:
+              // The KML object is stored as the 'this' object.
+              // Store the array in result.  Have to do some logical parent / children stuff here.
+              // See:
               // http://code.google.com/p/earth-api-utility-library/source/browse/trunk/extensions/src/dom/utils.js
               // and
               // http://code.google.com/p/earth-api-utility-library/wiki/GEarthExtensionsDomReference#walk%28options%29
-              // for some examples.
-              tempthis.kmlLayerNodes[name].push(context);
+              // for some not so great examples.
+              result.push(this);
             }
           });
-          this.constructNodes(this.kmlLayerNodes[name]);
+          tempthis.kmlLayerNodes[name] = result;
+          tempthis.constructNodes(result);
         }
-      }
     },
     
     constructNodes: function(objs) {
