@@ -726,9 +726,9 @@ Ext.onReady(function() {
         if ((googleEarthPanelItem) && (googleEarthPanelItem.ge != null)) {
           if (node.layer.CLASS_NAME == "OpenLayers.Layer.GML") {
             if (checked) {
-              googleEarthPanelItem.addNetworkLink(node.layer.name, node.layer.url);
+              googleEarthPanelItem.addKmlLayer(node.layer.name, node.layer.url);
             } else {
-              googleEarthPanelItem.removeNetworkLink(node.layer.name);
+              googleEarthPanelItem.removeKmlLayer(node.layer.name);
             }
           }
         }
@@ -737,7 +737,7 @@ Ext.onReady(function() {
         var googleEarthPanelItem = Ext.getCmp("googleEarthPanelItem");
         if ((googleEarthPanelItem) && (googleEarthPanelItem.ge != null)) {
           if (node.layer.CLASS_NAME == "OpenLayers.Layer.GML") {
-            googleEarthPanelItem.addNetworkLink(node.layer.name, node.layer.url);
+            googleEarthPanelItem.addKmlLayer(node.layer.name, node.layer.url);
           }
         }
       }

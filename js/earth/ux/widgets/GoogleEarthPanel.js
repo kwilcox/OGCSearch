@@ -189,6 +189,8 @@ GeoExt.ux.GoogleEarthPanel = Ext.extend(Ext.Panel, {
     
     /* Array of networkLinks on the map... so we can remove them. */
     networkLinks: new Array(),
+    
+    kmlLayers: new Array(),
 
     /** private: property[layerCache]
      *  Layer cache for Google Earth PlugIn
@@ -315,10 +317,10 @@ GeoExt.ux.GoogleEarthPanel = Ext.extend(Ext.Panel, {
         if (this.networkLinkUrl) {
             if (this.networkLinkUrl.constructor.toString().indexOf("Array") != -1) {
                 for (var i = 0; i < this.networkLinkUrl.length; i++) {
-                    this.addNetwokLink(this.networkLinkUrl[i]);
+                    this.addNetworkLink(this.networkLinkUrl[i]);
                 }
             } else {
-                this.addNetwokLink(this.networkLinkUrl);
+                this.addNetworkLink(this.networkLinkUrl);
             }
         }
 
@@ -349,7 +351,43 @@ GeoExt.ux.GoogleEarthPanel = Ext.extend(Ext.Panel, {
         this.earthAvailable = false;
     },
 
-    /** method[addNetwokLink]
+    addKmlLayer: function(name, url) {
+      if (this.ge) {
+        google.earth.fetchKml(this.ge, url, function(kmlObject) {
+          if (this.kmlLayers[name]) {
+            this.removeKmlLayer(name);
+          }
+          this.kmlLayers[name] = kmlObject;
+          this.ge.getFeatures().appendChild(kmlObject);
+          this.buildLayerArray(kmlObject);
+        });
+      }
+    },
+    
+    buildLayerArray: function(kmlObject) {
+      if (this.ge) {
+        var gex = new GEarthExtensions(this.ge);
+        gex.dom.walk({
+          rootObject: kmlObject,
+          rootContext: 1,
+          features: true,
+          geometries: true,
+          visitCallback: function(context) {
+            alert(context.name);
+          }
+        });
+      }
+    },
+    
+    removeKmlLayer: function(name) {
+      if (this.ge) {
+        if (this.kmlLayers[name]) {
+          this.ge.getFeatures().removeChild(this.kmlLayers[name]);
+        }
+      }
+    },
+    
+    /** method[addNetworkLink]
      *  Add a network link to the google earth panel
      */
     addNetworkLink: function(name, url) {
