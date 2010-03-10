@@ -190,7 +190,11 @@ GeoExt.ux.GoogleEarthPanel = Ext.extend(Ext.Panel, {
     /* Array of networkLinks on the map... so we can remove them. */
     networkLinks: new Array(),
     
+    /* Array of kmlLayers on the map */
     kmlLayers: new Array(),
+    
+    /* KML objects that have been parsed.  This is the array of nodes */
+    kmlLayerNodes: new Array(),
 
     /** private: property[layerCache]
      *  Layer cache for Google Earth PlugIn
@@ -353,30 +357,49 @@ GeoExt.ux.GoogleEarthPanel = Ext.extend(Ext.Panel, {
 
     addKmlLayer: function(name, url) {
       if (this.ge) {
+        var tempthis = this;
         google.earth.fetchKml(this.ge, url, function(kmlObject) {
-          if (this.kmlLayers[name]) {
-            this.removeKmlLayer(name);
+          if (tempthis.kmlLayers[name]) {
+            tempthis.removeKmlLayer(name);
           }
-          this.kmlLayers[name] = kmlObject;
-          this.ge.getFeatures().appendChild(kmlObject);
-          this.buildLayerArray(kmlObject);
+          tempthis.kmlLayers[name] = kmlObject;
+          tempthis.ge.getFeatures().appendChild(kmlObject);
+          tempthis.buildLayerArray(name, kmlObject);
         });
       }
     },
     
-    buildLayerArray: function(kmlObject) {
+    buildLayerArray: function(name, kmlObject) {
       if (this.ge) {
-        var gex = new GEarthExtensions(this.ge);
-        gex.dom.walk({
-          rootObject: kmlObject,
-          rootContext: 1,
-          features: true,
-          geometries: true,
-          visitCallback: function(context) {
-            alert(context.name);
-          }
-        });
+        if (this.kmlLayerNodes[name]) {
+          this.constructNodes(this.kmlLayerNodes[name]);
+        } else {
+          var tempthis = this;
+          var gex = new GEarthExtensions(this.ge);
+          gex.dom.walk({
+            rootObject: kmlObject,
+            rootContext: 1,
+            features: true,
+            geometries: true,
+            visitCallback: function(context) {
+              // TODO: Build the array here (this gets called for each node).
+              // Store the array in tempthis.kmlLayerNodes[name].  Have to do some
+              // logical parent / children stuff here. See:
+              // http://code.google.com/p/earth-api-utility-library/source/browse/trunk/extensions/src/dom/utils.js
+              // and
+              // http://code.google.com/p/earth-api-utility-library/wiki/GEarthExtensionsDomReference#walk%28options%29
+              // for some examples.
+              tempthis.kmlLayerNodes[name].push(context);
+            }
+          });
+          this.constructNodes(this.kmlLayerNodes[name]);
+        }
       }
+    },
+    
+    constructNodes: function(objs) {
+      // TODO: Yippe.  I have an array of KML objects.
+      alert(objs);
     },
     
     removeKmlLayer: function(name) {
