@@ -95,6 +95,8 @@ function addKMLToMap(u,category,visibility) {
 
 Ext.onReady(function() {
   Ext.QuickTips.init();
+  // Doesn't seem to be helping w/ buttons & flash.
+  // Ext.useShims = true;
 
   var layerBlueMarble900913 = new OpenLayers.Layer.WMS(
      "900913 Blue Marble"
@@ -724,20 +726,19 @@ Ext.onReady(function() {
     ,split        : true
     ,listeners: {
       'append' : function(tree,nodeParent,node,number) {
-        var googleEarthPanelItem = Ext.getCmp("googleEarthPanelItem");
-        if (node.id.indexOf('kml') >= 0) {
-          googleEarthPanelItem.addKmlLayer(node.layer.name,node.layer.url);
+        if (!node.layer) {
+          return;
         }
-      }
-      ,'checkchange': function(node,checked) {
         var googleEarthPanelItem = Ext.getCmp("googleEarthPanelItem");
-        if (node.id.indexOf('kml') >= 0) {
-          if (checked) {
-            googleEarthPanelItem.addKmlLayer(node.layer.name,node.layer.url);
-          } 
-          else {
-            googleEarthPanelItem.removeKmlLayer(node.layer.name);
-          }
+        googleEarthPanelItem.addKmlLayer(node.layer.name,node.layer.url);
+      }
+      ,'checkchange' : function(node,checked) {
+        var googleEarthPanelItem = Ext.getCmp("googleEarthPanelItem");
+        if (checked) {
+          googleEarthPanelItem.addKmlLayer(node.layer.name,node.layer.url);
+        } 
+        else {
+          googleEarthPanelItem.removeKmlLayer(node.layer.name);
         }
       }
     }
@@ -773,13 +774,6 @@ Ext.onReady(function() {
       ,'-'
       ,actions["previous"]
       ,actions["next"]
-      ,'->'
-      ,{
-         text : "Help"
-        ,menu : new Ext.menu.Menu({
-          items : [actions['help'],actions['credits']]
-        })
-      }
     ]
   });
 
@@ -990,6 +984,13 @@ Ext.onReady(function() {
               }
             }
             ,id          : 'kmlSearchToggle'
+          }
+          ,'->'
+          ,{
+             text : "Help"
+            ,menu : new Ext.menu.Menu({
+              items : [actions['help'],actions['credits']]
+            })
           }
         ]
       }
