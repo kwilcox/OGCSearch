@@ -1,9 +1,9 @@
 var map;
-var mapPanel;
+var olMapPanel;
 var storeGetCaps;
 var winGetCaps;
 var layerPanel;
-var tabPanel;
+var olLayerPanel;
 var layerTree;
 var viewport;
 var maxBBOX = new Array();
@@ -21,6 +21,7 @@ var firstTime,lastTime,middleTime,currentTime;
 var timeFactor = 1;
 var sliderSpan = 48;
 var sliderIncr = 3;
+var mapPanel;
 
 // Earth
 var GoogleEarthPanel;
@@ -49,9 +50,9 @@ function nextMap() {
 }
 
 function setTimePanelPos() {
-  mapPanelPos = mapPanel.getPosition();
-  tabPanelX   = tabPanel.getPosition()[0];
-  timePanel.setPagePosition(tabPanelX - timePanel.getSize().width - 7,mapPanelPos[1] + 1);
+  olMapPanelPos = olMapPanel.getPosition();
+  olLayerPanelX   = olLayerPanel.getPosition()[0];
+  timePanel.setPagePosition(olLayerPanelX - timePanel.getSize().width - 5,olMapPanelPos[1] + olMapPanel.getFrameHeight());
 }
 
 function createPopup(feature,selectCtrl,layerKML,t) {
@@ -756,7 +757,7 @@ Ext.onReady(function() {
     }
   });
 
-  var legendPanel = new GeoExt.LegendPanel({
+  var olLegendPanel = new GeoExt.LegendPanel({
      title       : 'Legend'
     ,autoScroll  : true
     ,filter      : function(record) {
@@ -765,7 +766,7 @@ Ext.onReady(function() {
     ,labelCls    : 'legendText'
   });
 
-  var toolbar = new Ext.Toolbar({
+  var olToolbar = new Ext.Toolbar({
     items: [
        actions["zoom_in"]
       ,actions["zoom_out"]
@@ -776,30 +777,6 @@ Ext.onReady(function() {
       ,actions["next"]
       ,'->'
       ,{
-         text          : 'Google Earth'
-        ,id            : "googleToggle"
-        ,enableToggle  : true
-        ,pressed       : false
-        ,handler       : function() {
-          if (this.pressed) {
-            GoogleEarthPanel.add(googleEarthPanelItem);
-            GoogleEarthPanel.setHeight(400);
-            GoogleEarthPanel.setVisible(true);
-            GoogleEarthPanel.doLayout();
-            viewport.doLayout();
-          } else {
-            GoogleEarthPanel.remove('googleEarthPanelItem');
-            GoogleEarthPanel.setHeight(0);
-            GoogleEarthPanel.setVisible(false);
-            GoogleEarthPanel.doLayout();
-            viewport.doLayout();
-          }
-        }
-        ,iconCls  : 'buttonIcon'
-        ,tooltip  : 'Toggle Google Earth window'
-        ,icon     : 'img/google_earth.gif'
-      },
-      {
          text : "Help"
         ,menu : new Ext.menu.Menu({
           items : [actions['help'],actions['credits']]
@@ -816,6 +793,7 @@ Ext.onReady(function() {
     ,heading   : 0
     ,tilt      : 10
     ,range     : 70000
+    ,show2DNavigationTool : false
   };
 
   timeSlider = new Ext.Slider({
@@ -889,7 +867,7 @@ Ext.onReady(function() {
   });
 
   timePanel = new Ext.Panel({
-     renderTo     : Ext.getBody()
+     renderTo     : document.body
     ,id           : 'timePanel'
     ,layout       : 'table'
     ,items        : [animPlay,animPause,sliderCalendar,firstTime,middleTime,lastTime,timeSlider,currentTime]
@@ -900,7 +878,7 @@ Ext.onReady(function() {
     ,width        : 230
   });
 
-  mapPanel = new GeoExt.MapPanel({
+  olMapPanel = new GeoExt.MapPanel({
      region : "center"
     ,id     : "mappanel"
     ,xtype  : "gx_mappanel"
@@ -913,14 +891,56 @@ Ext.onReady(function() {
         setTimePanelPos();
       }
     }
+    ,tbar   : olToolbar
+    ,border : false
   });
 
-  tabPanel = new Ext.TabPanel({
-     region      : "east"
+  olLayerPanel = new Ext.TabPanel({
+     region      : 'east'
     ,activeTab   : 0
     ,width       : 250
     ,split       : true
-    ,items       : [layerPanel,legendPanel]
+    ,items       : [layerPanel,olLegendPanel]
+  });
+
+  olPanel = new Ext.Panel({
+     layout      : 'border'
+    ,split       : true 
+    ,items       : [olMapPanel,olLayerPanel]
+    ,border      : false
+    ,title       : 'OpenLayers'
+  });
+
+  geMapPanel = new Ext.Panel({
+     layout  : 'fit'
+    ,id      : 'googleearthpanel'
+    ,split   : true
+    ,html    : ''
+    ,title   : 'GoogleEarth'
+    ,items   : [googleEarthPanelItem]
+    ,hideMode : 'visibility'
+  });
+
+  mapPanel = new Ext.TabPanel({
+     region      : 'center'
+    ,activeTab   : 0
+    ,width       : 200
+    ,split       : true
+    ,items       : [olPanel,geMapPanel]
+    ,border      : false
+    ,listeners   : {
+      tabchange : function(panel,tab) {
+        if (tab.title == 'GoogleEarth') {
+          timePanel.hide();
+          Ext.getCmp('kmlSearchToggle').toggle(true);
+        }
+        else {
+          timePanel.show();
+          Ext.getCmp('wmsSearchToggle').toggle(true);
+        }
+      }
+    }
+    ,deferredRender : false
   });
 
   viewport = new Ext.Viewport({
@@ -929,19 +949,7 @@ Ext.onReady(function() {
       {
          region  : 'center'
         ,layout  : 'border'
-        ,tbar    : toolbar
-        ,items   : [
-           mapPanel
-          ,{
-             region      : "south"
-            ,height      : 0
-            ,layout      : 'fit'
-            ,id          : "googleearthpanel"
-            ,closeAction : 'hide'
-            ,split       : true
-            ,hidden      : true
-          }
-        ]
+        ,items   : [mapPanel]
       }  
       ,{ 
          region      : "west"
@@ -951,18 +959,40 @@ Ext.onReady(function() {
         ,split       : true
         ,collapsible : true
         ,autoScroll  : true
-        ,html        : '<table><tr><td>Enter Google search terms or a complete GetCapabilties web address or a KML file web address. See the Help button above the map panel for examples.</td></tr></table>'
-        ,cls         : 'directions'
+        ,tbar        : [
+          {
+             toggleGroup : 'searchType'
+            ,tooltip     : 'Click to perform a WMS search.'
+            ,text        : 'WMS search'
+            ,pressed     : true
+            ,handler     : function() {
+              if (this.pressed) {
+                mapPanel.setActiveTab(0);
+              }
+            }
+            ,id          : 'wmsSearchToggle'
+          }
+          ,{
+             toggleGroup : 'searchType'
+            ,tooltip     : 'Click to perform a KML search.'
+            ,text        : 'KML search'
+            ,handler     : function() {
+              if (this.pressed) {
+                mapPanel.setActiveTab(1);
+              }
+            }
+            ,id          : 'kmlSearchToggle'
+          }
+        ]
       }
-      ,tabPanel
     ]
   });
 
   // show help at startup
-  winHelp.show();
+//  winHelp.show();
 
   // show about at startup
-  winAbout.show();
+//  winAbout.show();
 
   // populate sample layers
   populateSampleLayers();
@@ -974,10 +1004,6 @@ Ext.onReady(function() {
   map.setBaseLayer(layerBlueMarble4326);
   map.setCenter(new OpenLayers.LonLat(-100,40),4);
   Ext.getCmp('mappanel').body.setStyle('cursor','move');
-  
-  // Earth
-  GoogleEarthPanel = Ext.getCmp("googleearthpanel");
-  GoogleEarthPanel.add(googleEarthPanelItem);
 });
 
 function applyTime(t) {
