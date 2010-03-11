@@ -2,9 +2,9 @@ var map;
 var olMapPanel;
 var storeGetCaps;
 var winGetCaps;
-var layerPanel;
+var olLayerTree;
+var geLayerTree;
 var olLayerPanel;
-var layerTree;
 var viewport;
 var maxBBOX = new Array();
 var prevProjection;
@@ -55,28 +55,9 @@ function setTimePanelPos() {
   timePanel.setPagePosition(olLayerPanelX - timePanel.getSize().width - 5,olMapPanelPos[1] + olMapPanel.getFrameHeight());
 }
 
-function createPopup(feature,selectCtrl,layerKML,t) {
-  popup = new GeoExt.Popup({
-     feature     : feature
-    ,width       : 300
-    ,html        : feature.attributes['description']
-    ,title       : t
-    ,collapsible : true
-  });
-  // unselect feature when the popup is closed
-  popup.on({
-    close : function() {
-      if(OpenLayers.Util.indexOf(layerKML.selectedFeatures,this.feature) > -1) {
-        selectCtrl.unselect(this.feature);
-      }
-    }
-  });
-  popup.show();
-}
-
 function addKMLToMap(u,category,visibility) {
-  if (layerPanel.collapsed) {
-    layerPanel.expand();
+  if (geLayerTree.collapsed) {
+    geLayerTree.expand();
   }
   
   var purl = proxyLoc ? proxyLoc + escape(u) : u;
@@ -101,18 +82,14 @@ function addKMLToMap(u,category,visibility) {
       }
     }
   );
-
-  // add it to the map
   layerKML.visibility = visibility;
-  // no, don't really add it to the OL map
-  // map.addLayer(layerKML);
 
   // add the layer to the list
   var layerNode = new Ext.data.Node({
     id : p[p.length-1]
   });
   layerNode.layer = layerKML;
-  kmlNode = layerPanel.getRootNode().findChild('text',category);
+  kmlNode = geLayerTree.getRootNode().findChild('text',category);
   kmlNode.appendChild(layerNode);
 }
 
@@ -504,6 +481,7 @@ Ext.onReady(function() {
     store.load();
 
     addKMLToMap(document.location+'kml/emilyir.kml','Sample KML',false);
+    addKMLToMap('http://asascience_marcoos.s3.amazonaws.com/MARCOOS.kmz','Sample KML',false);
   }
 
   function findAndZoom(warn) {
@@ -614,15 +592,20 @@ Ext.onReady(function() {
     });
   }
 
-  function buildTreeNodes() {
+  function buildOLTreeNodes() {
     return ([
       {
          nodeType : "gx_baselayercontainer"
         ,expanded : true
       }
       ,mkTreeNodeGroup('Sample WMS')
-      ,mkTreeNodeGroup('Sample KML')
       ,mkTreeNodeGroup('User-added WMS')
+    ]);
+  }
+
+  function buildGETreeNodes() {
+    return ([
+       mkTreeNodeGroup('Sample KML')
       ,mkTreeNodeGroup('User-added KML')
     ]);
   }
@@ -631,8 +614,8 @@ Ext.onReady(function() {
     if (!record || record.get("title").indexOf('No layers found.') == 0) {
       return;
     }
-    if (layerPanel.collapsed) {
-      layerPanel.expand();
+    if (olLayerTree.collapsed) {
+      olLayerTree.expand();
     }
     var layer         = record.get("layer").clone();
     layer.singleTile  = true;
@@ -647,7 +630,7 @@ Ext.onReady(function() {
       id : record.get("title")
     });
     layerNode.layer = layer;
-    var wmsNode = layerPanel.getRootNode().findChild('text',category);
+    var wmsNode = olLayerTree.getRootNode().findChild('text',category);
     wmsNode.appendChild(layerNode);
 
     // record supported srs-es
@@ -690,7 +673,7 @@ Ext.onReady(function() {
     ]
   });
 
-  var layerStore = new GeoExt.data.LayerStore({
+  var olLayerStore = new GeoExt.data.LayerStore({
      map    : map
     ,layers : [
        layerBlueMarble4326
@@ -707,10 +690,10 @@ Ext.onReady(function() {
     nodeType: "gx_baselayercontainer"
   }],true);
 
-  layerPanel = new Ext.tree.TreePanel({
+  olLayerTree = new Ext.tree.TreePanel({
     root: {
       nodeType : "async"
-     ,children : buildTreeNodes()
+     ,children : buildOLTreeNodes()
     }
     ,title        : 'Layers'
     ,rootVisible  : false
@@ -721,24 +704,39 @@ Ext.onReady(function() {
     })
     ,tbar         : [actions["addCustomURL"],'->',actions["findOnMap"]]
     ,border       : false
+  });
+
+  geLayerTree = new Ext.tree.TreePanel({
+    root: {
+      nodeType : "async"
+     ,children : buildGETreeNodes()
+    }
+    ,title        : 'Layers'
+    ,rootVisible  : false
+    ,lines        : false
+    ,autoScroll   : true
+    ,loader       : new Ext.tree.TreeLoader({
+      applyLoader : false
+    })
+    ,tbar         : [actions["addCustomURL"]]
+    ,region       : 'east'
+    ,width        : 250
+    ,split        : true
     ,listeners: {
-      "checkchange": function(node,checked) {
+      'append' : function(tree,nodeParent,node,number) {
         var googleEarthPanelItem = Ext.getCmp("googleEarthPanelItem");
-        if ((googleEarthPanelItem) && (googleEarthPanelItem.ge != null)) {
-          if (node.layer.CLASS_NAME == "OpenLayers.Layer.GML") {
-            if (checked) {
-              googleEarthPanelItem.addKmlLayer(node.layer.name, node.layer.url);
-            } else {
-              googleEarthPanelItem.removeKmlLayer(node.layer.name);
-            }
-          }
+        if (node.id.indexOf('kml') >= 0) {
+          googleEarthPanelItem.addKmlLayer(node.layer.name,node.layer.url);
         }
       }
-      ,"append": function(tree,nodeParent,node,number) {
+      ,'checkchange': function(node,checked) {
         var googleEarthPanelItem = Ext.getCmp("googleEarthPanelItem");
-        if ((googleEarthPanelItem) && (googleEarthPanelItem.ge != null)) {
-          if (node.layer.CLASS_NAME == "OpenLayers.Layer.GML") {
-            googleEarthPanelItem.addKmlLayer(node.layer.name, node.layer.url);
+        if (node.id.indexOf('kml') >= 0) {
+          if (checked) {
+            googleEarthPanelItem.addKmlLayer(node.layer.name,node.layer.url);
+          } 
+          else {
+            googleEarthPanelItem.removeKmlLayer(node.layer.name);
           }
         }
       }
@@ -794,6 +792,7 @@ Ext.onReady(function() {
     ,tilt      : 10
     ,range     : 70000
     ,show2DNavigationTool : false
+    ,border    : false
   };
 
   timeSlider = new Ext.Slider({
@@ -883,7 +882,7 @@ Ext.onReady(function() {
     ,id     : "mappanel"
     ,xtype  : "gx_mappanel"
     ,map    : map
-    ,layers : layerStore
+    ,layers : olLayerStore
     ,zoom   : 1
     ,split  : true
     ,listeners : {
@@ -900,7 +899,7 @@ Ext.onReady(function() {
     ,activeTab   : 0
     ,width       : 250
     ,split       : true
-    ,items       : [layerPanel,olLegendPanel]
+    ,items       : [olLayerTree,olLegendPanel]
   });
 
   olPanel = new Ext.Panel({
@@ -912,13 +911,22 @@ Ext.onReady(function() {
   });
 
   geMapPanel = new Ext.Panel({
-     layout  : 'fit'
-    ,id      : 'googleearthpanel'
+     id      : 'googleearthpanel'
+    ,layout  : 'fit'
+    ,region  : 'center'
     ,split   : true
     ,html    : ''
-    ,title   : 'GoogleEarth'
     ,items   : [googleEarthPanelItem]
+    ,border  : false
+  });
+
+  gePanel = new Ext.Panel({
+     layout  : 'border'
+    ,split   : true
+    ,title   : 'GoogleEarth'
+    ,items   : [geMapPanel,geLayerTree]
     ,hideMode : 'visibility'
+    ,border   : false
   });
 
   mapPanel = new Ext.TabPanel({
@@ -926,7 +934,7 @@ Ext.onReady(function() {
     ,activeTab   : 0
     ,width       : 200
     ,split       : true
-    ,items       : [olPanel,geMapPanel]
+    ,items       : [olPanel,gePanel]
     ,border      : false
     ,listeners   : {
       tabchange : function(panel,tab) {
