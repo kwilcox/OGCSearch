@@ -27,6 +27,17 @@ var mapPanel;
 var GoogleEarthPanel;
 google.load("earth", "1.x");
 
+Ext.override(Ext.TabPanel, {
+  getActiveTabIndex: function() {
+    for (var i=0; i<this.items.getCount(); i++) {
+      if(this.activeTab == this.items.get(i)) {
+        return i;
+      }
+    }
+    return -1;
+  }
+});
+
 function startSlides() {
   if (animatedTimer) {
     clearInterval(animatedTimer);

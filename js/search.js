@@ -193,7 +193,7 @@ RawSearchControl.prototype.onSubmit = function(form) {
     else {
       // if there is an expression in the form, call the active searcher's
       // .execute method
-      if (Ext.getCmp('wmsSearchToggle').pressed) {
+      if (mapPanel.getActiveTabIndex() == 0) {
         this.searchers[this.activeSearcher].execute(form.input.value + ' wms getcapabilities -filetype:pdf -filetype:doc -filetype:xls');
       }
       else {
