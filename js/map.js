@@ -95,8 +95,8 @@ function addKMLToMap(u,category,visibility) {
 
 Ext.onReady(function() {
   Ext.QuickTips.init();
-  // Doesn't seem to be helping w/ buttons & flash.
-  // Ext.useShims = true;
+  // Doesn't seem to be helping w/ buttons & flash in FF.
+  Ext.useShims = true;
 
   var layerBlueMarble900913 = new OpenLayers.Layer.WMS(
      "900913 Blue Marble"
@@ -925,7 +925,7 @@ Ext.onReady(function() {
 
   mapPanel = new Ext.TabPanel({
      region      : 'center'
-    ,activeTab   : 0
+    ,activeTab   : 1
     ,width       : 200
     ,split       : true
     ,items       : [olPanel,gePanel]
