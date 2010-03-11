@@ -68,9 +68,9 @@ function scanUrl(searcherID,uri) {
       var data       = o.responseText; // Response data.
       var searcherID = args[0];
       var hits       = [];
-      var m          = data.match(/href\s*=\s*"([^"]+(REQUEST=GetCapabilities|\.kml)[^"]*)"/ig);
+      var m          = data.match(/href\s*=\s*"([^"]+(REQUEST=GetCapabilities|\.kml|\.kmz)[^"]*)"/ig);
       // see if the actual uri was a getcaps
-      if (uri.search(/GetCapabilities|\.kml/ig) > 0) {
+      if (uri.search(/GetCapabilities|\.kml|\.kmz/ig) > 0) {
         if (m) {
           m.push('href="' + uri + '"');
         }
@@ -193,7 +193,12 @@ RawSearchControl.prototype.onSubmit = function(form) {
     else {
       // if there is an expression in the form, call the active searcher's
       // .execute method
-      this.searchers[this.activeSearcher].execute(form.input.value + ' wms getcapabilities -filetype:pdf -filetype:doc -filetype:xls');
+      if (Ext.getCmp('wmsSearchToggle').pressed) {
+        this.searchers[this.activeSearcher].execute(form.input.value + ' wms getcapabilities -filetype:pdf -filetype:doc -filetype:xls');
+      }
+      else {
+        this.searchers[this.activeSearcher].execute(form.input.value + ' kml');
+      }
     }
   }
 
