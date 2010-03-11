@@ -938,6 +938,7 @@ Ext.onReady(function() {
         }
         else {
           timePanel.show();
+          setTimePanelPos();
           Ext.getCmp('wmsSearchToggle').toggle(true);
         }
       }
