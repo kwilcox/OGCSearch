@@ -94,6 +94,11 @@ function addKMLToMap(u,category,visibility) {
     }
   );
   layerKML.visibility = visibility;
+  if (visibility) {
+    if (mapPanel.getActiveTabIndex() == 0) {
+      mapPanel.setActiveTab(1); 
+    }
+  }
 
   // add the layer to the list
   var layerNode = new Ext.data.Node({
@@ -308,7 +313,7 @@ Ext.onReady(function() {
     ,closeAction : 'hide'
     ,html        : '<table width=100% cellpadding=0 cellspacing=0> <tr><td class="dirText"><ul class="dirUL"> <li> <table width=100%><tr> <td width=54 class="dirTD"><img src="img/search.png"></td> <td class="dirTD">&nbsp;</td> <td class="dirTD">Begin by entering in a query string into the Google search panel and pressing the Search button. Or follow an example:<br><ol><li><a href="javascript:searchForm.execute(\'water temperature\')">water temperature</a> search (then follow the rest of the help directions below)</li><li><a href="javascript:getLayers(\'http://staging.asascience.com/ecop/wms.aspx?REQUEST=GetCapabilities&VERSION=1.1.1&SERVICE=WMS\')">ASA GetCaps</a> link</li></ol></td> </tr></table> </li> <li> <table width=100%><tr> <td align=center width=54 class="dirTD"><img src="img/down1.png">&nbsp;&nbsp;&nbsp;<img src="img/down0.png"></td> <td class="dirTD">&nbsp;</td> <td class="dirTD">Once the search is complete, each Google hit will be followed by either a gray or a green down arrow. A green down arrow indicates at least one GetCapabilities was found on the page. Click the arrow to see the GetCapabilities URL list.</td> </tr></table> </li> <li> <table width=100%><tr> <td align=center width=54 class="dirTD"><img src="img/info1.png"></td> <td class="dirTD">&nbsp;</td> <td class="dirTD">Remember, these links don\'t guarantee a true GetCapabilities result, and they are not restricted to WMS.</td> </tr></table> </li> <li> <table width=100%><tr> <td align=center width=54 class="dirTD"><img src="img/map1.png"></td> <td class="dirTD">&nbsp;</td> <td class="dirTD">Each numbered GetCapabilities link with a Green Arrow will be followed by a Map button. Clicking on this icon will pass the URL to the map which will then list the available layers.</td> </tr></table> </li> <li> <table width=100%><tr> <td align=center width=54 class="dirTD"><img style="margin-top:2px" src="img/hand1.gif"></td> <td class="dirTD">&nbsp;</td> <td class="dirTD">After the map has parsed the GetCapabilities, double-click on a layer name to add it to the map.</td> </tr></table> </li> </ul></td></tr> </table>'
     ,x           : 50
-    ,y           : 300
+    ,y           : 200
   });
   action = new Ext.Action({
      text    : "Help & guide"
@@ -328,6 +333,8 @@ Ext.onReady(function() {
     ,modal       : true
     ,closeAction : 'hide'
     ,html        : '<table width=100% cellpadding=0 cellspacing=10> <tr><td class="dirText"><p style="text-align:justify"><img border=none src="img/mop.png" alt="MOP" width="190" height="75" style="padding:0;margin:2px 10px 0px 0px;float:left;"/> This application was built by ASA <a href="http://www.asascience.com/" target=_blank><img border=none src="img/external.png"></a> with MOP <a href="http://www.massoceanpartnership.org/" target=_blank><img border=none src="img/external.png"></a> sponsorship, and is a prototype to explore the use of Google Search technology to discover and access ocean data. For this prototype, the system searches for data that is available as OGC-compliant WMS services. The application demonstrates that such data can be found and accessed in a single web client. It also demonstrates that there is a huge range in how standards are implemented and that not all services work as expected. This application will be extended to search for other services and data such as SOS, WFS, and KML.<br><br> The Massachusetts Ocean <img border=none src="img/asa.png" alt="MOP" width="82" height="75" style="padding:0;margin:10px 0px 0px 10px;float:right;"/>Partnership is committed to helping Massachusetts create and implement the best ocean management plan possible -- one that fairly represents all interests, is based on the best available scientific information and, ultimately, supports resilient ocean ecosystems, productive economies and vibrant communities.</p></td></tr></table>'
+    ,x           : 70
+    ,y           : 220
   });
   action = new Ext.Action({
      text    : "About this site"
@@ -494,7 +501,7 @@ Ext.onReady(function() {
     store.load();
 
     addKMLToMap(document.location+'kml/emilyir.kml','Sample KML',false);
-    addKMLToMap('http://asascience_marcoos.s3.amazonaws.com/MARCOOS.kmz','Sample KML',false);
+    addKMLToMap('http://www.ndbc.noaa.gov/kml/marineobs_by_owner.kml','Sample KML',false);
   }
 
   function findAndZoom(warn) {
@@ -629,6 +636,11 @@ Ext.onReady(function() {
     }
     if (olLayerTree.collapsed) {
       olLayerTree.expand();
+    }
+    if (visibility) {
+      if (mapPanel.getActiveTabIndex() == 1) {
+        mapPanel.setActiveTab(0);
+      }
     }
     var layer         = record.get("layer").clone();
     layer.singleTile  = true;
@@ -1010,10 +1022,10 @@ Ext.onReady(function() {
   });
 
   // show help at startup
-//  winHelp.show();
+  winHelp.show();
 
   // show about at startup
-//  winAbout.show();
+  winAbout.show();
 
   // populate sample layers
   populateSampleLayers();
@@ -1025,6 +1037,10 @@ Ext.onReady(function() {
   map.setBaseLayer(layerBlueMarble4326);
   map.setCenter(new OpenLayers.LonLat(-100,40),4);
   Ext.getCmp('mappanel').body.setStyle('cursor','move');
+
+  if (navigator.appName == 'Netscape') {
+    alert('The Google Earth plugin has a known bug in the Firefox browser. You will be unable to see popup window borders as well as buttons if they appear over the GE plugin. We recommend using Internet Explorer until this bug is fixed by Google.');
+  }
 });
 
 function applyTime(t) {

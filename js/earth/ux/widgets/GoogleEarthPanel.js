@@ -402,7 +402,7 @@ GeoExt.ux.GoogleEarthPanel = Ext.extend(Ext.Panel, {
     
     constructNodes: function(objs) {
       // TODO: Yippe.  I have an array of KML objects.
-      alert(objs);
+      // alert(objs);
     },
     
     removeKmlLayer: function(name) {
