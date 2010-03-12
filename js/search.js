@@ -37,8 +37,8 @@ function listHits(id) {
     a.href   = hitsArr[id][i];
     a.target = '_blank';
     txt = hitsArr[id][i];
-    if (hitsArr[id][i].length > 20) {
-      txt = hitsArr[id][i].substr(0,20)+'...';
+    if (hitsArr[id][i].length > 60) {
+      txt = hitsArr[id][i].substr(0,60)+'...';
     }
     a.innerHTML = txt;
     li.appendChild(a);
